@@ -9,6 +9,7 @@ const ROS_DISTRO = core.getInput('ros-distro', {required: true});
 let GAZEBO_VERSION = core.getInput('gazebo-version');
 let SAMPLE_APP_VERSION = '';
 const WORKSPACE_DIRECTORY = core.getInput('workspace-dir');
+const GENERATE_SOURCES = core.getInput('prepare-sources');
 let PACKAGES = "none"
 const ROS_ENV_VARIABLES: any = {};
 
@@ -193,6 +194,7 @@ async function run() {
   console.log(`ROS_DISTRO: ${ROS_DISTRO}`);
   console.log(`GAZEBO_VERSION: ${GAZEBO_VERSION}`);
   console.log(`WORKSPACE_DIRECTORY: ${WORKSPACE_DIRECTORY}`);
+  console.log(`GENERATE_SOURCES: ${GENERATE_SOURCES}`);
 
   await setup();
   if (ROS_DISTRO == "kinetic" && (GAZEBO_VERSION == "" || GAZEBO_VERSION == "7")) {
@@ -208,7 +210,9 @@ async function run() {
   } else {
     core.setFailed(`Invalid ROS and Gazebo combination`);
   }
-  await prepare_sources();
+  if (GENERATE_SOURCES == 'true') {
+    await prepare_sources();
+  }
   await build();
   await bundle();
 

@@ -10,6 +10,9 @@ inputs:
   workspace-dir:
     description: 'Path to the workspace folder that contains your packages [robot_ws|simulation_ws]'
     default: './'
+  prepare-sources:
+    description: 'Whether or not to generate sources.zip and sources.tar.gz files [true|false]'
+    default: false
 outputs:
   ros-distro:
     description: 'Distribution of ROS to use [kinetic|melodic|dashing]'
