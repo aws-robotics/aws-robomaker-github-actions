@@ -9,7 +9,7 @@ const ROS_DISTRO = core.getInput('ros-distro', {required: true});
 let GAZEBO_VERSION = core.getInput('gazebo-version');
 let SAMPLE_APP_VERSION = '';
 const WORKSPACE_DIRECTORY = core.getInput('workspace-dir');
-const GENERATE_SOURCES = core.getInput('prepare-sources');
+const GENERATE_SOURCES = core.getInput('generate-sources');
 let PACKAGES = "none"
 const ROS_ENV_VARIABLES: any = {};
 
