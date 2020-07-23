@@ -753,7 +753,7 @@ function fetchRosinstallDependencies() {
 function setup() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            yield exec.exec("apt-key", ["adv", "--fetch-keys", "http://packages.osrfoundation.org/gazebo.key"]);
+            yield exec.exec("sudo", ["apt-key", "adv", "--fetch-keys", "http://packages.osrfoundation.org/gazebo.key"]);
             const aptPackages = [
                 "zip",
                 "cmake",
@@ -791,16 +791,16 @@ function setup_gazebo9() {
         try {
             const gazebo9_apt_file = "/etc/apt/sources.list.d/gazebo-stable.list";
             yield exec.exec("sudo", ["rm", "-f", gazebo9_apt_file]);
-            yield exec.exec("bash", ["-c", `echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable \`lsb_release -cs\` main" >> ${gazebo9_apt_file}`]);
+            yield exec.exec("bash", ["-c", `echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable \`lsb_release -cs\` main" | sudo tee ${gazebo9_apt_file}`]);
             yield exec.exec("sudo", ["apt-get", "update"]);
             if (ROS_DISTRO == "kinetic") {
                 const gazebo9_rosdep_file = "/etc/ros/rosdep/sources.list.d/00-gazebo9.list";
                 yield exec.exec("sudo", ["rm", "-f", gazebo9_rosdep_file]);
-                yield exec.exec("bash", ["-c", `echo "yaml https://github.com/osrf/osrf-rosdep/raw/master/gazebo9/gazebo.yaml" >> ${gazebo9_rosdep_file}`]);
-                yield exec.exec("bash", ["-c", `echo "yaml https://github.com/osrf/osrf-rosdep/raw/master/gazebo9/releases/indigo.yaml indigo" >> ${gazebo9_rosdep_file}`]);
-                yield exec.exec("bash", ["-c", `echo "yaml https://github.com/osrf/osrf-rosdep/raw/master/gazebo9/releases/jade.yaml jade" >> ${gazebo9_rosdep_file}`]);
-                yield exec.exec("bash", ["-c", `echo "yaml https://github.com/osrf/osrf-rosdep/raw/master/gazebo9/releases/kinetic.yaml kinetic" >> ${gazebo9_rosdep_file}`]);
-                yield exec.exec("bash", ["-c", `echo "yaml https://github.com/osrf/osrf-rosdep/raw/master/gazebo9/releases/lunar.yaml lunar" >> ${gazebo9_rosdep_file}`]);
+                yield exec.exec("bash", ["-c", `echo "yaml https://github.com/osrf/osrf-rosdep/raw/master/gazebo9/gazebo.yaml" | sudo tee ${gazebo9_rosdep_file}`]);
+                yield exec.exec("bash", ["-c", `echo "yaml https://github.com/osrf/osrf-rosdep/raw/master/gazebo9/releases/indigo.yaml indigo" | sudo tee ${gazebo9_rosdep_file}`]);
+                yield exec.exec("bash", ["-c", `echo "yaml https://github.com/osrf/osrf-rosdep/raw/master/gazebo9/releases/jade.yaml jade" | sudo tee ${gazebo9_rosdep_file}`]);
+                yield exec.exec("bash", ["-c", `echo "yaml https://github.com/osrf/osrf-rosdep/raw/master/gazebo9/releases/kinetic.yaml kinetic" | sudo tee ${gazebo9_rosdep_file}`]);
+                yield exec.exec("bash", ["-c", `echo "yaml https://github.com/osrf/osrf-rosdep/raw/master/gazebo9/releases/lunar.yaml lunar" | sudo tee ${gazebo9_rosdep_file}`]);
                 yield exec.exec("rosdep", ["update"]);
             }
         }
