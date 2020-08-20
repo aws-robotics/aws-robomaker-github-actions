@@ -3,11 +3,11 @@
 This action will build and bundle your AWS RoboMaker Sample Application package.
 It must run in an environment that has all core ROS dependencies already installed for the ROS distro you are using (Kinetic, Melodic, Dashing, etc). 
 
-You use a [ros-core docker container], see usage section to see how to use this container. 
+You use a [setup-ros-docker docker container], see usage section to see how to use this container. 
 
 ## Usage
 
-Using a [ros-core docker container] docker container:
+Using a [setup-ros-docker docker container] docker container:
 
 ```
 jobs:
@@ -15,13 +15,15 @@ jobs:
     runs-on: ubuntu-latest
     name: Build Kinetic
     container:
-      image: ros:kinetic-ros-core
+    image: rostooling/setup-ros-docker:ubuntu-xenial-ros-kinetic-ros-base-latest
     steps:
     - name: Build
-      uses: actions/aws-robomaker-sample-application-ci@v1
+      uses: aws-robotics/aws-robomaker-github-actions@1.0.0
       with:
         ros-distro: kinetic
+        gazebo-version: 7
         workspace-dir: robot_ws
+        generate-sources: true
   build-and-bundle-simulation_ws-kinetic:
     runs-on: ubuntu-latest
     name: Build Kinetic
@@ -29,9 +31,10 @@ jobs:
       image: ros:kinetic-ros-core
     steps:
     - name: Build
-      uses: actions/aws-robomaker-sample-application-ci@v1
+      uses: aws-robotics/aws-robomaker-github-actions@1.0.0
       with:
         ros-distro: kinetic
+        gazebo-version: 7
         workspace-dir: simulation_ws
 ```
 
@@ -45,5 +48,4 @@ jobs:
 
 Path to the workspace folder of your package (*eg.*: `[robot_ws|simulation_ws]`, *default:* `./`). 
 
-[setup-ros1]: https://github.com/ros-tooling/setup-ros1
-[ros-core docker container]: https://hub.docker.com/_/ros/
+[setup-ros-docker container]: https://hub.docker.com/r/rostooling/setup-ros-docker
