@@ -731,12 +731,8 @@ function fetchRosinstallDependencies() {
         let packages = [];
         // Download dependencies not in apt if .rosinstall exists
         try {
-            for (let workspace of ["robot_ws", "simulation_ws"]) {
-                if (fs.existsSync(path.join(workspace, '.rosinstall'))) {
-                    yield exec.exec("rosws", ["update", "-t", workspace]);
-                }
-            }
             if (fs.existsSync(path.join(WORKSPACE_DIRECTORY, '.rosinstall'))) {
+                yield exec.exec("vcs", ["import", "--input", ".rosinstall"], getExecOptions());
                 yield exec.exec("colcon", ["list", "--names-only"], getExecOptions(colconListAfter));
                 const packagesAfter = colconListAfter.stdout.split("\n");
                 packagesAfter.forEach(packageName => {
@@ -766,7 +762,7 @@ function setup() {
                 "python3-apt"
             ];
             const python3Packages = [
-                "setuptools",
+                "setuptools!=50.0.0",
                 "colcon-bundle",
                 "colcon-ros-bundle"
             ];
