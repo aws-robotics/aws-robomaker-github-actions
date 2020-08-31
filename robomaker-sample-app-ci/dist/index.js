@@ -762,7 +762,7 @@ function setup() {
                 "python3-apt"
             ];
             const python3Packages = [
-                "setuptools==49.3.0",
+                "setuptools!=50.0.0",
                 "colcon-bundle",
                 "colcon-ros-bundle"
             ];
