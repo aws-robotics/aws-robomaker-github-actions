@@ -101,7 +101,7 @@ async function setup() {
     ];
 
     const python3Packages = [
-      "setuptools",
+      "setuptools==49.3.0",
       "colcon-bundle",
       "colcon-ros-bundle"
     ];
