@@ -1,6 +1,14 @@
 #!/bin/bash
 set -e
 
+# set aws-credentials
+mkdir -p ~/.aws
+touch ~/.aws/credentials
+
+echo "[default]
+aws_access_key_id = ${AWS_ACCESS_KEY_ID}
+aws_secret_access_key = ${AWS_SECRET_ACCESS_KEY}" > ~/.aws/credentials
+
 # Set username and password to commit to the app-manifest repo 
 # TODO: update user email and name 
 GH_USER_EMAIL = "travis-ci"
