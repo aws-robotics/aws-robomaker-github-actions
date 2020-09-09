@@ -25,7 +25,7 @@ if [ -n "$BRANCH_COMMIT_ID" ]; then
 fi
 
 if [ -z "$SA_VERSION" ]; then
-    echo "No application version set, did add_tag run?"
+    echo "Please provide SA_VERSION"
     exit 1
 fi
 

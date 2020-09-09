@@ -1,8 +1,8 @@
  
 FROM python:3.7-alpine
 
-LABEL "com.github.actions.name"="add-bundle-tag"
-LABEL "com.github.actions.description"="Add app-manifest bundle version tag"
+LABEL "com.github.actions.name"="update-app-manifest"
+LABEL "com.github.actions.description"="Update the app-manifest version tag"
 LABEL "com.github.actions.icon"="copy"
 LABEL "com.github.actions.color"="green"
 
