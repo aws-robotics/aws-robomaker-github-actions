@@ -23,8 +23,11 @@ jobs:
     - name: Put file into a codecommit repo
       uses: aws-robotics/robomaker-sample-app-ci/codecommit-put-file-action@v2.0.0
       env:
-        REPO_NAME: 'test-codecommit-repo'
-        BRANCH_NAME: 'mainline'
+        AWS_REGION: us-east-2
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        REPO_NAME: ${{ secrets.REPO_NAME }}
+        BRANCH_NAME: ${{ secrets.BRANCH_NAME }}
         FILE_CONTENT: '{"name": "hello-world"}
         FILE_PATH: '/test_file'
         COMMIT_MSG: 'test commit'
@@ -38,8 +41,6 @@ jobs:
 
 | Key | Value | Type | Required |
 | ------------- | ------------- | ------------- | ------------- |
-| `REPO_NAME` | Codecommit repo name | `env` | **Yes** |
-| `BRANCH_NAME` | Codecommit repo branch name |`env` | **Yes** |
 | `FILE_CONTENT` | File/ File content | `env` | **Yes** |
 | `FILE_PATH` | Path where the file should be put inside the repo | `env` | **Yes** |
 | `COMMIT_MSG` | Commit message | `env` | **Yes** |
@@ -56,6 +57,7 @@ The following variables should be added as "secrets" in the action's configurati
 
 | Key | Value | Type | Required |
 | ------------- | ------------- | ------------- | ------------- |
-| `AWS_S3_BUCKET` | The name of the bucket you're syncing to. For example, `golang-deployment-bucket`. | `secret` | **Yes** |
+| `REPO_NAME` | Codecommit repo name | `env` | **Yes** |
+| `BRANCH_NAME` | Codecommit repo branch name |`env` | **Yes** |
 | `AWS_ACCESS_KEY_ID` | Your AWS Access Key. [More info here.](https://docs.aws.amazon.com/general/latest/gr/managing-aws-access-keys.html) | `secret` | **Yes** |
 | `AWS_SECRET_ACCESS_KEY` | Your AWS Secret Access Key. [More info here.](https://docs.aws.amazon.com/general/latest/gr/managing-aws-access-keys.html) | `secret` | **Yes** |
