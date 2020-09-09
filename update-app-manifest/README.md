@@ -35,7 +35,7 @@ jobs:
 | Key | Value | Type | Required |
 | ------------- | ------------- | ------------- | ------------- |
 | `SA_VERSION` | Latest sample app version number which the Appmanifest should point to | `env` | **Yes** |
-| `SA_NAME` |  | Sample app name |`env` | **Yes** |
+| `SA_NAME` | Sample app name |`env` | **Yes** |
 | `ROS_DISTRO` | ROS distribution | `env` | **Yes** |
 | `GAZEBO_VERSION` | Gazebo version | `env` | **Yes** |
 
