@@ -20,15 +20,13 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@master
-    - name: Upload binary to S3 bucket
+    - name: Update App-manifest version number
       uses: aws-robotics/robomaker-sample-app-ci/update-app-manifest@v2.0.0
       env:
         SA_NAME=cloudwatch
         ROS_DISTRO=kinetic
         GAZEBO_VERSION=gazebo7
         SA_VERSION=1.0.0.1000
-      with:
-        args: --acl public-read
 ```
 
 
