@@ -57,7 +57,7 @@ The following variables should be added as "secrets" in the action's configurati
 
 | Key | Value | Type | Required |
 | ------------- | ------------- | ------------- | ------------- |
-| `AWS_CODECOMMIT_REPO_NAME` | Codecommit repo name | `env` | **Yes** |
-| `AWS_CODECOMMIT_BRANCH_NAME` | Codecommit repo branch name |`env` | **Yes** |
+| `AWS_CODECOMMIT_REPO_NAME` | Codecommit repo name | `secret` | **Yes** |
+| `AWS_CODECOMMIT_BRANCH_NAME` | Codecommit repo branch name |`secret` | **Yes** |
 | `AWS_ACCESS_KEY_ID` | Your AWS Access Key. [More info here.](https://docs.aws.amazon.com/general/latest/gr/managing-aws-access-keys.html) | `secret` | **Yes** |
 | `AWS_SECRET_ACCESS_KEY` | Your AWS Secret Access Key. [More info here.](https://docs.aws.amazon.com/general/latest/gr/managing-aws-access-keys.html) | `secret` | **Yes** |
