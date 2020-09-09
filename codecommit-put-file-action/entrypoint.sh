@@ -11,4 +11,6 @@ aws_secret_access_key = ${AWS_SECRET_ACCESS_KEY}" > ~/.aws/credentials
 
 aws codecommit put-file --repository-name "$REPO_NAME" --branch-name "$BRANCH_NAME" --file-content "$FILE_CONTENT" --file-path "$FILE_PATH" --commit-message "$COMMIT_MSG" --name "$GH_USER_NAME" --email "$GH_USER_EMAIL" $PARENT_COMMIT_FLAG
 
+rm -rf ~/.aws
+
 set +e
