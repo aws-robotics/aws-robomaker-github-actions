@@ -8,7 +8,7 @@ set -e
 export GH_USER_EMAIL = ""
 export GH_USER_NAME = ""
 
-# Fetch the relevant S3 bucket & CodePipeline
+# Fetch the relevant CodePipeline
 APP_MANIFEST_REPO="AppManifest-$SA_NAME-$ROS_DISTRO-gazebo$GAZEBO_VERSION"
 BRANCH_INFO=`aws codecommit get-branch --repository-name $APP_MANIFEST_REPO --branch-name mainline`
 BRANCH_INFO_STATUS=$?
