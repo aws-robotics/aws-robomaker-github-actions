@@ -1,12 +1,10 @@
 #!/bin/bash
 set -e
 
-# # Use Github Actions build number for versioning;
-# echo {\"application_version\": \"${SA_VERSION}\"} > version.json
-
 # Set username and password to commit to the app-manifest repo 
-export GH_USER_EMAIL = ""
-export GH_USER_NAME = ""
+# TODO: update user email and name 
+GH_USER_EMAIL = "travis-ci"
+GH_USER_NAME = "travis@travis-ci.org"
 
 # Fetch the relevant CodePipeline
 APP_MANIFEST_REPO="AppManifest-$SA_NAME-$ROS_DISTRO-gazebo$GAZEBO_VERSION"
@@ -25,10 +23,11 @@ if [ -n "$BRANCH_COMMIT_ID" ]; then
 fi
 
 if [ -z "$SA_VERSION" ]; then
-    echo "Please provide SA_VERSION"
+    echo "Please set the SA_VERSION env variable"
     exit 1
 fi
 
+# # Use Github Actions build number for versioning;
 TIMESTAMP=`date +%s`
 aws codecommit put-file --repository-name "$APP_MANIFEST_REPO" --branch-name mainline --file-content "{\"application_version\": \"$SA_VERSION\",\"timestamp\":\"$TIMESTAMP\"}" --file-path "/version.json" --commit-message "Updating to version $SA_VERSION." --name "$GH_USER_NAME" --email "$GH_USER_EMAIL" $PARENT_COMMIT_FLAG
 

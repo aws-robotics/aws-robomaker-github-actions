@@ -1,6 +1,6 @@
 # GitHub Action to update the package version in the Appmanifest🔄
 
-This simple action uses the [vanilla AWS CLI](https://docs.aws.amazon.com/cli/index.html) to update the package version in the Appmanifest.
+This action uses the [vanilla AWS CLI](https://docs.aws.amazon.com/cli/index.html) to update the package version in the Appmanifest.
 
 
 ## Usage
@@ -24,9 +24,9 @@ jobs:
       uses: aws-robotics/robomaker-sample-app-ci/update-app-manifest@v2.0.0
       env:
         SA_NAME: 'hello-world'
-        ROS_DISTRO: kinetic
-        GAZEBO_VERSION: gazebo7
-        SA_VERSION: 1.0.0.1000
+        ROS_DISTRO: 'kinetic'
+        GAZEBO_VERSION: 'gazebo7'
+        SA_VERSION: '1.0.0.1000'
 ```
 
 
