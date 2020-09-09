@@ -25,7 +25,7 @@ jobs:
       env:
         REPO_NAME: 'test-codecommit-repo'
         BRANCH_NAME: 'mainline'
-        FILE_CONTENT: '{"name": "hello-world"'
+        FILE_CONTENT: '{"name": "hello-world"}
         FILE_PATH: '/test_file'
         COMMIT_MSG: 'test commit'
         PARENT_COMMIT_FLAG: ''  
