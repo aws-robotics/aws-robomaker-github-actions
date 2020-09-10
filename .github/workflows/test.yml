@@ -26,6 +26,7 @@ jobs:
       with:
         node-version: '12.x'
     - run: ls      
+      working-directory: ./action
     - run: npm install
       working-directory: ./action
     - run: npm run build
