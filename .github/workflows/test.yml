@@ -36,5 +36,5 @@ jobs:
         ros-distro: melodic
         gazebo-version: 9
         workspace-dir: sample/simulation_ws
-        generate-sources: true
+        generate-sources: false
         
