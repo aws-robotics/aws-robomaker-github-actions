@@ -31,7 +31,6 @@ jobs:
         DEST_FILE_CONTENT: '{"name": "hello-world"}
         DEST_FILE_PATH: '/test_file'
         COMMIT_MSG: 'test commit'
-        PARENT_COMMIT_FLAG: ''  
         USER_EMAIL: xyz@abc.com
         USER_NAME: xyz.abc
 ```
@@ -44,7 +43,6 @@ jobs:
 | `DEST_FILE_CONTENT` | File/ File content | `env` | **Yes** |
 | `DEST_FILE_PATH` | Path where the file should be put inside the repo | `env` | **Yes** |
 | `COMMIT_MSG` | Commit message | `env` | **Yes** |
-| `PARENT_COMMIT_FLAG` | Parent commit flag | `env` | **Yes** |
 | `USER_EMAIL` | Email-ID to be associated with this commit | `env` | **Yes** |
 | `USER_NAME` | user-name to be associated with this commit | `env` | **Yes** |
 | `AWS_REGION` | The region where you created your bucket in. For example, `eu-central-1`. [Full list of regions here.](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html#concepts-available-regions) | `env` | **Yes** |
