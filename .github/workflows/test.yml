@@ -40,9 +40,9 @@ jobs:
     - run: node dist/index.js
       working-directory: ./action/robomaker-sample-app-ci
       env:
-        INPUT-ROS-DISTRO: melodic
-        INPUT-GAZEBO-VERSION: 9
-        INPUT-WORKSPACE-DIR: sample/simulation_ws
-        INPUT-GENERATE-SOURCES: true
+        INPUT_ROS-DISTRO: melodic
+        INPUT_GAZEBO-VERSION: 9
+        INPUT_WORKSPACE-DIR: sample/simulation_ws
+        INPUT_GENERATE-SOURCES: true
       
         
