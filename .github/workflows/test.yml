@@ -29,18 +29,18 @@ jobs:
       working-directory: ./action/robomaker-sample-app-ci
     - run: npm run build
       working-directory: ./action/robomaker-sample-app-ci
-    #- uses: actions/checkout@v2
-    #  with:
-    #    repository: aws-robotics/aws-robomaker-sample-application-helloworld
-    #    ref: ros1
-    #    path: sample      
-    #- uses: ros-tooling/setup-ros@0.0.25
-    #  with:
-    #    required-ros-distributions: melodic
-    #- uses: ./action/robomaker-sample-app-ci
-    #  with:
-    #    ros-distro: melodic
-    #    gazebo-version: 9
-    #    workspace-dir: sample/simulation_ws
-    #    generate-sources: true
+    - uses: actions/checkout@v2
+      with:
+        repository: aws-robotics/aws-robomaker-sample-application-helloworld
+        ref: ros1
+        path: sample      
+    - uses: ros-tooling/setup-ros@0.0.25
+      with:
+        required-ros-distributions: melodic
+    - uses: ./action/robomaker-sample-app-ci
+      with:
+        ros-distro: melodic
+        gazebo-version: 9
+        workspace-dir: sample/simulation_ws
+        generate-sources: true
         
