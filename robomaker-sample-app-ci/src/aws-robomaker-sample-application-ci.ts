@@ -180,7 +180,7 @@ async function build() {
 async function bundle() {
   try {
     await exec.exec("colcon", ["bundle", "--build-base", "build", "--install-base", "install", "--bundle-base", "bundle"], getExecOptions());
-    await exec.exec("mv", ["bundle/output.tar", `../${WORKSPACE_DIRECTORY}.tar`], getExecOptions());
+    await exec.exec("mv", ["bundle/output.tar", `../${PWD##*/}.tar`], getExecOptions());
     await exec.exec("rm", ["-rf", "bundle"], getExecOptions());  // github actions have been failing with no disk space
   } catch (error) {
     core.setFailed(error.message);
