@@ -1,42 +1,40 @@
-name: "Test for aws-robomaker-github-actions"
+name: "Test wangvnn-github-actions"
+
 on:
-  pull_request:
   push:
-    branches:
-      - kenvink_aws-robotmaker-github-actions
+  pull_request:
+    branches: [kenvink/test_actions]
+
 defaults:
   run:
     shell: bash
 
 jobs:
-  test_ros:
-    name: "Test robomaker-sample-app-ci"
+  clone-and-install:  
     runs-on: ubuntu-latest
+    
     strategy:
       fail-fast: false
-      matrix:
-        ros_distribution:  # ROS 1 tests only run on Ubuntu
-          - melodic
-
-        # Define the Docker image(s) associated with each ROS distribution.
-        # The include syntax allows additional variables to be defined, like
-        # docker_image in this case. See documentation:
-        # https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#example-including-configurations-in-a-matrix-build
-        #
-        # Platforms are defined in REP 3: https://ros.org/reps/rep-0003.html
-        include:
-          # Melodic Morenia (May 2018 - May 2023)
-          - docker_image: ubuntu:bionic
-            ros_distribution: melodic
-    container:
-      image: ${{ matrix.docker_image }}
-    steps:
+    container: ubuntu:bionic
+      
+    steps:    
     - uses: actions/checkout@v2
+      with:
+        path: action
+    - uses: actions/checkout@v2
+      with:
+        repository: aws-robotics/aws-robomaker-sample-application-helloworld
+        path: sample
     - uses: actions/setup-node@v1
       with:
         node-version: '12.x'
     - uses: ros-tooling/setup-ros@0.0.25
       with:
-        required-ros-distributions: ${{ matrix.ros_distribution }}        
-    - run: ls
-    
+        required-ros-distributions: melodic
+    - uses: ./action/robomaker-sample-app-ci
+      with:
+        ros-distro: melodic
+        gazebo-version: 9
+        workspace-dir: sample/simulation_ws
+        generate-sources: true
+        
