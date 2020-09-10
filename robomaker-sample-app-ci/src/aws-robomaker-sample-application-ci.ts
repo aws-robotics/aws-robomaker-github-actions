@@ -159,8 +159,9 @@ async function prepare_sources() {
     ];
 
     const sourceIncludesStr = sourceIncludes.join(" ");
-    await exec.exec("bash", ["-c", `zip -r sources.zip ${sourceIncludesStr}`], getExecOptions());
-    await exec.exec("bash", ["-c", `tar cvzf sources.tar.gz ${sourceIncludesStr}`], getExecOptions());
+    const sourceFolder =  path.join("${WORKSPACE_DIRECTORY}", "..")
+    await exec.exec("bash", ["-c", `zip -r sources.zip ${sourceIncludesStr}`], { cwd: ${sourceFolder} });
+    await exec.exec("bash", ["-c", `tar cvzf sources.tar.gz ${sourceIncludesStr}`], { cwd: ${sourceFolder} });
   } catch (error) {
     core.setFailed(error.message);
   }
@@ -179,10 +180,10 @@ async function build() {
 
 async function bundle() {
   try {
-    const working_dir = '${WORKSPACE_DIRECTORY}'
-    const bundle_filename = working_dir.split(path.sep).pop()    
+    const workingFolder = "${WORKSPACE_DIRECTORY}"
+    const bundleFilename = workingFolder.split(path.sep).pop()    
     await exec.exec("colcon", ["bundle", "--build-base", "build", "--install-base", "install", "--bundle-base", "bundle"], getExecOptions());
-    await exec.exec("mv", ["bundle/output.tar", `../${bundle_filename}.tar`], getExecOptions());
+    await exec.exec("mv", ["bundle/output.tar", `../${bundleFilename}.tar`], getExecOptions());
     await exec.exec("rm", ["-rf", "bundle"], getExecOptions());  // github actions have been failing with no disk space
   } catch (error) {
     core.setFailed(error.message);
