@@ -20,7 +20,7 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@master
-    - name: Get the most recent commit-id on a codecommit repo branch
+    - name: Fetch the most recent commit-id on a codecommit repo branch
       id: get_commit_id
       uses: aws-robotics/robomaker-sample-app-ci/codecommit-get-commit-id@v2.0.0
       env:
@@ -30,7 +30,7 @@ jobs:
         AWS_CODECOMMIT_REPO_NAME: ${{ secrets.REPO_NAME }}
         AWS_CODECOMMIT_BRANCH_NAME: ${{ secrets.BRANCH_NAME }}
     # Use the output from the previous step
-    - name: Get the output time
+    - name: Get the commit id
       run: echo "The time was ${{ steps.get_commit_id.outputs.commit_id }}"
 ```
 
