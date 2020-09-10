@@ -23,16 +23,16 @@ jobs:
     - name: Put file into a codecommit repo
       uses: aws-robotics/robomaker-sample-app-ci/codecommit-put-file-action@v2.0.0
       env:
-        AWS_REGION: us-east-2
+        AWS_REGION: 'us-east-2'
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         AWS_CODECOMMIT_REPO_NAME: ${{ secrets.REPO_NAME }}
         AWS_CODECOMMIT_BRANCH_NAME: ${{ secrets.BRANCH_NAME }}
-        DEST_FILE_CONTENT: '{"name": "hello-world"}
+        DEST_FILE_CONTENT: {"name": "hello-world"}
         DEST_FILE_PATH: '/test_file'
         COMMIT_MSG: 'test commit'
-        USER_EMAIL: xyz@abc.com
-        USER_NAME: xyz.abc
+        USER_EMAIL: 'xyz@abc.com'
+        USER_NAME: 'xyz.abc'
 ```
 
 
