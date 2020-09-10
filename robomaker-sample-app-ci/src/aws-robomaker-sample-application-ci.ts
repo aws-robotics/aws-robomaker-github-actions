@@ -159,8 +159,8 @@ async function prepare_sources() {
     ];
 
     const sourceIncludesStr = sourceIncludes.join(" ");
-    await exec.exec("bash", ["-c", `zip -r sources.zip ${sourceIncludesStr}`]);
-    await exec.exec("bash", ["-c", `tar cvzf sources.tar.gz ${sourceIncludesStr}`]);
+    await exec.exec("bash", ["-c", `zip -r sources.zip ${sourceIncludesStr}`], getExecOptions());
+    await exec.exec("bash", ["-c", `tar cvzf sources.tar.gz ${sourceIncludesStr}`], getExecOptions());
   } catch (error) {
     core.setFailed(error.message);
   }
