@@ -1,0 +1,9 @@
+name: 'Get latest commit-id'
+description: 'Fetches the latest commit-id on a specific codecommit repo branch'
+inputs:
+outputs:
+  commit_id:
+    description: 'latest commit-id'
+runs:
+  using: 'docker'
+  image: 'Dockerfile'

@@ -10,7 +10,7 @@ This action uses the [vanilla AWS CLI](https://docs.aws.amazon.com/cli/index.htm
 Place in a `.yml` file such as this one in your `.github/workflows` folder. [Refer to the documentation on workflow YAML syntax here.](https://help.github.com/en/articles/workflow-syntax-for-github-actions)
 
 ```
-name: Codecommit put-file
+name: Get latest codecommit commit-id
 on: push
 
 jobs:
@@ -20,20 +20,18 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@master
-    - name: Put file into a codecommit repo
-      uses: aws-robotics/robomaker-sample-app-ci/codecommit-put-file-action@v2.0.0
+    - name: Get the most recent commit-id on a codecommit repo branch
+      id: get_commit_id
+      uses: aws-robotics/robomaker-sample-app-ci/codecommit-get-commit-id@v2.0.0
       env:
         AWS_REGION: us-east-2
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         AWS_CODECOMMIT_REPO_NAME: ${{ secrets.REPO_NAME }}
         AWS_CODECOMMIT_BRANCH_NAME: ${{ secrets.BRANCH_NAME }}
-        FILE_CONTENT: '{"name": "hello-world"}
-        FILE_PATH: '/test_file'
-        COMMIT_MSG: 'test commit'
-        PARENT_COMMIT_FLAG: ''  
-        USER_EMAIL: xyz@abc.com
-        USER_NAME: xyz.abc
+    # Use the output from the previous step
+    - name: Get the output time
+      run: echo "The time was ${{ steps.get_commit_id.outputs.commit_id }}"
 ```
 
 
@@ -41,12 +39,6 @@ jobs:
 
 | Key | Value | Type | Required |
 | ------------- | ------------- | ------------- | ------------- |
-| `FILE_CONTENT` | File/ File content | `env` | **Yes** |
-| `FILE_PATH` | Path where the file should be put inside the repo | `env` | **Yes** |
-| `COMMIT_MSG` | Commit message | `env` | **Yes** |
-| `PARENT_COMMIT_FLAG` | Parent commit flag | `env` | **Yes** |
-| `USER_EMAIL` | Email-ID to be associated with this commit | `env` | **Yes** |
-| `USER_NAME` | user-name to be associated with this commit | `env` | **Yes** |
 | `AWS_REGION` | The region where you created your bucket in. For example, `eu-central-1`. [Full list of regions here.](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html#concepts-available-regions) | `env` | **Yes** |
 
 
