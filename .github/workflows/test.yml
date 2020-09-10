@@ -27,6 +27,8 @@ jobs:
         node-version: '12.x'
     - run: npm install
       working-directory: ./action/robomaker-sample-app-ci
+    - run: npm install typescript --save-dev
+      working-directory: ./action/robomaker-sample-app-ci       
     - run: npm run build
       working-directory: ./action/robomaker-sample-app-ci
     - uses: actions/checkout@v2
