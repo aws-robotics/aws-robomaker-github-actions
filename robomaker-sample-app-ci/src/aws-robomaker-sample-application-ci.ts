@@ -49,6 +49,15 @@ function getExecOptions(listenerBuffers?): ExecOptions {
   return execOptions
 }
 
+
+function getRootExecOptions(): ExecOptions {
+  const execOptions: ExecOptions = {
+    cwd: path.join(WORKSPACE_DIRECTORY, ".."),
+    env: Object.assign({}, process.env, ROS_ENV_VARIABLES)
+  };
+  return execOptions
+}
+
 async function getSampleAppVersion() : Promise<string> {
   let grepAfter = {stdout: '', stderr: ''};
   let version = '';
@@ -159,12 +168,8 @@ async function prepare_sources() {
     ];
 
     const sourceIncludesStr = sourceIncludes.join(" ");
-    const sourceFolder =  path.join("${WORKSPACE_DIRECTORY}", "..")
-    const execOptions = {
-      "cwd": ${sourceFolder}
-    };
-    await exec.exec("bash", ["-c", `zip -r sources.zip ${sourceIncludesStr}`], execOptions);
-    await exec.exec("bash", ["-c", `tar cvzf sources.tar.gz ${sourceIncludesStr}`], execOptions);
+    await exec.exec("bash", ["-c", `zip -r sources.zip ${sourceIncludesStr}`], getRootExecOptions());
+    await exec.exec("bash", ["-c", `tar cvzf sources.tar.gz ${sourceIncludesStr}`], getRootExecOptions());
   } catch (error) {
     core.setFailed(error.message);
   }
