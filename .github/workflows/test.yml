@@ -1,4 +1,4 @@
-name: "Test wangvnn-github-actions"
+name: "Test aws-robomaker-github-actions"
 
 on:
   push:
@@ -37,5 +37,5 @@ jobs:
         ros-distro: melodic
         gazebo-version: 9
         workspace-dir: sample/simulation_ws
-        generate-sources: false
+        generate-sources: true
         
