@@ -31,7 +31,7 @@ jobs:
         AWS_CODECOMMIT_BRANCH_NAME: ${{ secrets.BRANCH_NAME }}
     # Use the output from the previous step
     - name: Get the commit id
-      run: echo "The time was ${{ steps.get_commit_id.outputs.commit_id }}"
+      run: echo "The latest commit id is ${{ steps.get_commit_id.outputs.commit_id }}"
 ```
 
 
