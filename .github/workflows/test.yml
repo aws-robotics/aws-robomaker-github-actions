@@ -23,7 +23,8 @@ jobs:
         path: action
     - uses: actions/checkout@v2
       with:
-        repository: aws-robotics/aws-robomaker-sample-application-helloworld
+        repository: aws-robotics/aws-robomaker-sample-application-cloudwatch
+        ref: ros1
         path: sample
     - uses: actions/setup-node@v1
       with:
