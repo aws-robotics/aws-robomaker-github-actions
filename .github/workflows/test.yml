@@ -37,8 +37,7 @@ jobs:
     - uses: ros-tooling/setup-ros@0.0.25
       with:
         required-ros-distributions: melodic
-    - run: node dist/index.js
-      working-directory: ./action/robomaker-sample-app-ci
+    - run: node ./action/robomaker-sample-app-ci/dist/index.js      
       env:
         INPUT_ROS-DISTRO: melodic
         INPUT_GAZEBO-VERSION: 9
