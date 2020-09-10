@@ -1,6 +1,6 @@
 # Action to put a file in a Codecommit repo 🔄
 
-This action uses the [vanilla AWS CLI](https://docs.aws.amazon.com/cli/index.html) to put file in the codecommit repo.
+This action uses the [vanilla AWS CLI](https://docs.aws.amazon.com/cli/index.html) to get the most recent commit-id from a codecommit repo branch.
 
 
 ## Usage
