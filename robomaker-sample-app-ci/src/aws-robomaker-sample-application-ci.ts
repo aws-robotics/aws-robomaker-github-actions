@@ -160,8 +160,11 @@ async function prepare_sources() {
 
     const sourceIncludesStr = sourceIncludes.join(" ");
     const sourceFolder =  path.join("${WORKSPACE_DIRECTORY}", "..")
-    await exec.exec("bash", ["-c", `zip -r sources.zip ${sourceIncludesStr}`], { "cwd": ${sourceFolder} });
-    await exec.exec("bash", ["-c", `tar cvzf sources.tar.gz ${sourceIncludesStr}`], { "cwd": ${sourceFolder} });
+    const execOptions = {
+      "cwd": ${sourceFolder}
+    };
+    await exec.exec("bash", ["-c", `zip -r sources.zip ${sourceIncludesStr}`], execOptions);
+    await exec.exec("bash", ["-c", `tar cvzf sources.tar.gz ${sourceIncludesStr}`], execOptions);
   } catch (error) {
     core.setFailed(error.message);
   }
