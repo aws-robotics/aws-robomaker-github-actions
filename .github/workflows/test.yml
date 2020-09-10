@@ -10,11 +10,12 @@ defaults:
     shell: bash
 
 jobs:
-  clone-and-install:  
+  test_robomaker-sample-app-ci:
     runs-on: ubuntu-latest
     
     strategy:
       fail-fast: false
+      
     container: ubuntu:bionic
       
     steps:    
@@ -29,6 +30,10 @@ jobs:
     - uses: actions/setup-node@v1
       with:
         node-version: '12.x'
+    - run: nmp install
+      working-directory: ./action
+    - run: nmp run build
+      working-directory: ./action
     - uses: ros-tooling/setup-ros@0.0.25
       with:
         required-ros-distributions: melodic
