@@ -28,8 +28,8 @@ jobs:
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         AWS_CODECOMMIT_REPO_NAME: ${{ secrets.REPO_NAME }}
         AWS_CODECOMMIT_BRANCH_NAME: ${{ secrets.BRANCH_NAME }}
-        FILE_CONTENT: '{"name": "hello-world"}
-        FILE_PATH: '/test_file'
+        DEST_FILE_CONTENT: '{"name": "hello-world"}
+        DEST_FILE_PATH: '/test_file'
         COMMIT_MSG: 'test commit'
         PARENT_COMMIT_FLAG: ''  
         USER_EMAIL: xyz@abc.com
@@ -41,8 +41,8 @@ jobs:
 
 | Key | Value | Type | Required |
 | ------------- | ------------- | ------------- | ------------- |
-| `FILE_CONTENT` | File/ File content | `env` | **Yes** |
-| `FILE_PATH` | Path where the file should be put inside the repo | `env` | **Yes** |
+| `DEST_FILE_CONTENT` | File/ File content | `env` | **Yes** |
+| `DEST_FILE_PATH` | Path where the file should be put inside the repo | `env` | **Yes** |
 | `COMMIT_MSG` | Commit message | `env` | **Yes** |
 | `PARENT_COMMIT_FLAG` | Parent commit flag | `env` | **Yes** |
 | `USER_EMAIL` | Email-ID to be associated with this commit | `env` | **Yes** |
