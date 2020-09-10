@@ -30,17 +30,17 @@ jobs:
     - uses: actions/setup-node@v1
       with:
         node-version: '12.x'
-    - run: nmp install
+    - run: npm install
       working-directory: ./action
-    - run: nmp run build
+    - run: npm run build
       working-directory: ./action
-    - uses: ros-tooling/setup-ros@0.0.25
-      with:
-        required-ros-distributions: melodic
-    - uses: ./action/robomaker-sample-app-ci
-      with:
-        ros-distro: melodic
-        gazebo-version: 9
-        workspace-dir: sample/simulation_ws
-        generate-sources: true
+    #- uses: ros-tooling/setup-ros@0.0.25
+    #  with:
+    #    required-ros-distributions: melodic
+    #- uses: ./action/robomaker-sample-app-ci
+    #  with:
+    #    ros-distro: melodic
+    #    gazebo-version: 9
+    #    workspace-dir: sample/simulation_ws
+    #    generate-sources: true
         
