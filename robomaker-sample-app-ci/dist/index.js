@@ -841,7 +841,7 @@ function bundle() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             yield exec.exec("colcon", ["bundle", "--build-base", "build", "--install-base", "install", "--bundle-base", "bundle"], getExecOptions());
-            yield exec.exec("mv", ["bundle/output.tar", `../${WORKSPACE_DIRECTORY}.tar`], getExecOptions());
+            yield exec.exec("mv", ["bundle/output.tar", `../${PWD##*/}.tar`], getExecOptions());
             yield exec.exec("rm", ["-rf", "bundle"], getExecOptions()); // github actions have been failing with no disk space
         }
         catch (error) {
