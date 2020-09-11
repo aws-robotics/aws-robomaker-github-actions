@@ -34,6 +34,9 @@ jobs:
     container: 
       image: rostooling/setup-ros-docker:ubuntu-${{ matrix.ubuntu_distro }}-ros-${{ matrix.distro }}-ros-base-latest
       
+    # NOTES: We run 2 tests for robot_ws and simulation_ws
+    # The test steps are duplicated because github workflow does not support reusable step (with parameter yet)
+    # We also can use matrix to run tests with different parameters but it is overkill for this
     steps:    
     - name: Checkout code
       uses: actions/checkout@v1
@@ -54,13 +57,15 @@ jobs:
       run: npm run build
       working-directory: ./robomaker-sample-app-ci
       
-    - name: Build and bundle robot_ws
+      # Trigger to run robomaker-sample-app-ci action script
+    - name: Build and bundle robot_ws      
       run: node ./robomaker-sample-app-ci/dist/index.js
       env:
         INPUT_ROS-DISTRO: ${{ matrix.distro }}
         INPUT_GAZEBO-VERSION: ${{ matrix.gazebo }}
         INPUT_WORKSPACE-DIR: ./.github/workflows/data/robot_ws
         INPUT_GENERATE-SOURCES: true
+    # Expectation: bundle file, build files, and dependencies all exist
     - name: Check robot_ws file existence
       id: check_robot_ws_files
       uses: andstor/file-existence-action@v1
@@ -68,13 +73,15 @@ jobs:
         files: "./.github/workflows/data/robot_ws.tar, ./.github/workflows/data/robot_ws/build, ./.github/workflows/data/robot_ws/install, ./.github/workflows/data/robot_ws/src/deps"
         allow_failure: true
         
+    # Trigger to run robomaker-sample-app-ci action script        
     - name: Build and bundle simulation_ws
       run: node ./robomaker-sample-app-ci/dist/index.js
       env:
         INPUT_ROS-DISTRO: ${{ matrix.distro }}
         INPUT_GAZEBO-VERSION: ${{ matrix.gazebo }}
         INPUT_WORKSPACE-DIR: ./.github/workflows/data/simulation_ws
-        INPUT_GENERATE-SOURCES: false
+        INPUT_GENERATE-SOURCES: false        
+    # Expectation: bundle file, build files, and dependencies all exist        
     - name: Check simulation_ws file existence
       id: check_simulation_ws_files
       uses: andstor/file-existence-action@v1
@@ -82,10 +89,11 @@ jobs:
         files: "./.github/workflows/data/simulation_ws.tar, ./.github/workflows/data/simulation_ws/build, ./.github/workflows/data/simulation_ws/install, ./.github/workflows/data/simulation_ws/src/deps"
         allow_failure: true
         
+    # Expectation: source files exist    
     - name: Check source file existence
       id: check_source_files
       uses: andstor/file-existence-action@v1
-      with:
+      with:        
         files: "./.github/workflows/data/sources.zip, ./.github/workflows/data/sources.tar.gz"
     
     - name: Check all files exists
