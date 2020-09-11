@@ -36,16 +36,24 @@ jobs:
       image: rostooling/setup-ros-docker:ubuntu-${{ matrix.ubuntu_distro }}-ros-${{ matrix.distro }}-ros-base-latest
       
     steps:    
-    - uses: actions/checkout@v2
-    - uses: actions/setup-node@v1
+    - name: Checkout Branch
+      uses: actions/checkout@v1
+    - name: Setup Permissions
+      run: |
+        # TODO(ros-tooling/setup-ros-docker#7): calling chown is necessary for now
+        sudo chown -R rosbuild:rosbuild "$HOME" .      
+    - name: Setup NodeJS
+      uses: actions/setup-node@v1
       with:
         node-version: '12.x'
-    - run: npm install
+    - name: Install NodeJS packages
+      run: npm install
       working-directory: ./robomaker-sample-app-ci
-    - run: npm run build
+    - name: Build test script
+      run: npm run build
       working-directory: ./robomaker-sample-app-ci
-    - run: node ./robomaker-sample-app-ci/dist/index.js      
-      name: Build and bundle robot_ws
+    - name: Build and bundle robot_ws
+      run: node ./robomaker-sample-app-ci/dist/index.js
       env:
         INPUT_ROS-DISTRO: ${{ matrix.distro }}
         INPUT_GAZEBO-VERSION: ${{ matrix.gazebo }}
