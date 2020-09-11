@@ -37,7 +37,7 @@ jobs:
     steps:    
     - name: Checkout code
       uses: actions/checkout@v1
-    - name: Setup Permissions
+    - name: Setup permissions
       run: |
         # Due to user permisson issue, calling chown is necessary for now
         # Related issue: https://github.com/actions/checkout/issues/47
@@ -66,6 +66,7 @@ jobs:
       uses: andstor/file-existence-action@v1
       with:
         files: "./.github/workflows/data/robot_ws.tar"
+        allow_failure: true
         
     - name: Build and bundle simulation_ws
       run: node ./robomaker-sample-app-ci/dist/index.js
@@ -79,6 +80,7 @@ jobs:
       uses: andstor/file-existence-action@v1
       with:
         files: "./.github/workflows/data/simulation_ws.tar"
+        allow_failure: true
         
     - name: Check source file existence
       id: check_source_files
