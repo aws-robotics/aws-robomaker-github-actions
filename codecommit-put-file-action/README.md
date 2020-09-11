@@ -23,7 +23,6 @@ jobs:
     - name: Put file into a codecommit repo
       uses: aws-robotics/robomaker-sample-app-ci/codecommit-put-file-action@v2.0.0
       env:
-        AWS_REGION: 'us-east-2'
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         AWS_CODECOMMIT_REPO_NAME: ${{ secrets.REPO_NAME }}
@@ -45,7 +44,6 @@ jobs:
 | `COMMIT_MSG` | Commit message | `env` | **Yes** |
 | `USER_EMAIL` | Email-ID to be associated with this commit | `env` | **Yes** |
 | `USER_NAME` | user-name to be associated with this commit | `env` | **Yes** |
-| `AWS_REGION` | The region where you created your bucket in. For example, `eu-central-1`. [Full list of regions here.](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html#concepts-available-regions) | `env` | **Yes** |
 
 
 
