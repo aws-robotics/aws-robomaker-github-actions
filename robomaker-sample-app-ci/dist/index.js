@@ -816,9 +816,13 @@ function prepare_sources() {
                 "README*",
                 "roboMakerSettings.json"
             ];
+            const execOptions = {
+                cwd: path.join(WORKSPACE_DIRECTORY, ".."),
+                env: Object.assign({}, process.env, ROS_ENV_VARIABLES)
+            };
             const sourceIncludesStr = sourceIncludes.join(" ");
-            yield exec.exec("bash", ["-c", `zip -r sources.zip ${sourceIncludesStr}`]);
-            yield exec.exec("bash", ["-c", `tar cvzf sources.tar.gz ${sourceIncludesStr}`]);
+            yield exec.exec("bash", ["-c", `zip -r sources.zip ${sourceIncludesStr}`], execOptions);
+            yield exec.exec("bash", ["-c", `tar cvzf sources.tar.gz ${sourceIncludesStr}`], execOptions);
         }
         catch (error) {
             core.setFailed(error.message);
@@ -840,10 +844,10 @@ function build() {
 function bundle() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const working_dir = '${WORKSPACE_DIRECTORY}'
-            const bundle_filename = working_dir.split(path.sep).pop()
+            const workingFolder = "${WORKSPACE_DIRECTORY}";
+            const bundleFilename = workingFolder.split(path.sep).pop();
             yield exec.exec("colcon", ["bundle", "--build-base", "build", "--install-base", "install", "--bundle-base", "bundle"], getExecOptions());
-            yield exec.exec("mv", ["bundle/output.tar", "../${bundle_filename}.tar"], getExecOptions());
+            yield exec.exec("mv", ["bundle/output.tar", `../${bundleFilename}.tar`], getExecOptions());
             yield exec.exec("rm", ["-rf", "bundle"], getExecOptions()); // github actions have been failing with no disk space
         }
         catch (error) {
