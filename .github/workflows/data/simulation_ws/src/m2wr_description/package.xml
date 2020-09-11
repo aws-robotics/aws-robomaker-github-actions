@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>m2wr_description</name>
+  <version>1.0.0</version>
+  <description>
+    AWS RoboMaker simulation test package
+  </description>
+  <license>MIT</license>
+  <author email="ros-contributions@amazon.com">AWS RoboMaker</author>
+  <maintainer email="ros-contributions@amazon.com">AWS RoboMaker</maintainer>
+  <buildtool_depend>catkin</buildtool_depend>
+  <depend>gazebo_ros</depend>
+  <depend>gazebo_plugins</depend>  
+  <exec_depend>gazebo</exec_depend>
+</package>

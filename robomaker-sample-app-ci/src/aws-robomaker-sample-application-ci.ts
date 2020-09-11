@@ -157,10 +157,15 @@ async function prepare_sources() {
       "README*",
       "roboMakerSettings.json"
     ];
-
+    
+    const execOptions: ExecOptions = {
+      cwd: path.join(WORKSPACE_DIRECTORY, ".."),
+      env: Object.assign({}, process.env, ROS_ENV_VARIABLES)
+    };
     const sourceIncludesStr = sourceIncludes.join(" ");
-    await exec.exec("bash", ["-c", `zip -r sources.zip ${sourceIncludesStr}`]);
-    await exec.exec("bash", ["-c", `tar cvzf sources.tar.gz ${sourceIncludesStr}`]);
+    
+    await exec.exec("bash", ["-c", `zip -r sources.zip ${sourceIncludesStr}`], execOptions);
+    await exec.exec("bash", ["-c", `tar cvzf sources.tar.gz ${sourceIncludesStr}`], execOptions);
   } catch (error) {
     core.setFailed(error.message);
   }
@@ -179,8 +184,9 @@ async function build() {
 
 async function bundle() {
   try {
+    const bundleFilename = WORKSPACE_DIRECTORY.split(path.sep).pop()    
     await exec.exec("colcon", ["bundle", "--build-base", "build", "--install-base", "install", "--bundle-base", "bundle"], getExecOptions());
-    await exec.exec("mv", ["bundle/output.tar", `../${WORKSPACE_DIRECTORY}.tar`], getExecOptions());
+    await exec.exec("mv", ["bundle/output.tar", `../${bundleFilename}.tar`], getExecOptions());
     await exec.exec("rm", ["-rf", "bundle"], getExecOptions());  // github actions have been failing with no disk space
   } catch (error) {
     core.setFailed(error.message);
