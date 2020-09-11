@@ -14,7 +14,6 @@ jobs:
     runs-on: ubuntu-latest
     
     strategy:      
-      fail-fast: false
       matrix:
         distro: ['kinetic', 'melodic']
         gazebo: [7, 9]
@@ -88,7 +87,7 @@ jobs:
         files: "./.github/workflows/data/sources.zip, ./.github/workflows/data/sources.tar.gz"
     
     - name: All files exists
-      if: steps.check_robot_ws_files.outputs.files_exists == 'true' && steps.check_simulation_ws_files.outputs.files_exists == 'true' && && steps.check_source_files.outputs.files_exists == 'true'
+      if: steps.check_robot_ws_files.outputs.files_exists == 'true' && steps.check_simulation_ws_files.outputs.files_exists == 'true' && steps.check_source_files.outputs.files_exists == 'true'
       # Only runs if all of the files exists
       run: echo All files exists!
       
