@@ -27,7 +27,7 @@ jobs:
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         AWS_CODECOMMIT_REPO_NAME: ${{ secrets.REPO_NAME }}
         AWS_CODECOMMIT_BRANCH_NAME: ${{ secrets.BRANCH_NAME }}
-        DEST_FILE_CONTENT: {"name": "hello-world"}
+        DEST_FILE_CONTENT: file://MyDirectory/ExampleSolution.py
         DEST_FILE_PATH: '/test_file'
         COMMIT_MSG: 'test commit'
         USER_EMAIL: 'xyz@abc.com'
@@ -39,11 +39,11 @@ jobs:
 
 | Key | Value | Type | Required |
 | ------------- | ------------- | ------------- | ------------- |
-| `DEST_FILE_CONTENT` | File/ File content | `env` | **Yes** |
-| `DEST_FILE_PATH` | Path where the file should be put inside the repo | `env` | **Yes** |
-| `COMMIT_MSG` | Commit message | `env` | **Yes** |
+| `DEST_FILE_CONTENT` | The content of the file, in binary object format. | `env` | **Yes** |
+| `DEST_FILE_PATH` | The name of the file you want to add or update, including the relative path to the file in the repository. | `env` | **Yes** |
+| `COMMIT_MSG` | A message about why this file was added or updated. Although it is optional, a message makes the commit history for your repository more useful. | `env` | **Yes** |
 | `USER_EMAIL` | Email-ID to be associated with this commit | `env` | **Yes** |
-| `USER_NAME` | user-name to be associated with this commit | `env` | **Yes** |
+| `USER_NAME` | Username to be associated with this commit | `env` | **Yes** |
 
 
 
@@ -53,7 +53,7 @@ The following variables should be added as "secrets" in the action's configurati
 
 | Key | Value | Type | Required |
 | ------------- | ------------- | ------------- | ------------- |
-| `AWS_CODECOMMIT_REPO_NAME` | Codecommit repo name | `secret` | **Yes** |
-| `AWS_CODECOMMIT_BRANCH_NAME` | Codecommit repo branch name |`secret` | **Yes** |
+| `AWS_CODECOMMIT_REPO_NAME` |The name of the repository where you want to add or update the file. | `secret` | **Yes** |
+| `AWS_CODECOMMIT_BRANCH_NAME` | The name of the branch where you want to add or update the file. If this is an empty repository, this branch is created. |`secret` | **Yes** |
 | `AWS_ACCESS_KEY_ID` | Your AWS Access Key. [More info here.](https://docs.aws.amazon.com/general/latest/gr/managing-aws-access-keys.html) | `secret` | **Yes** |
 | `AWS_SECRET_ACCESS_KEY` | Your AWS Secret Access Key. [More info here.](https://docs.aws.amazon.com/general/latest/gr/managing-aws-access-keys.html) | `secret` | **Yes** |
