@@ -65,7 +65,7 @@ jobs:
       id: check_robot_ws_files
       uses: andstor/file-existence-action@v1
       with:
-        files: "./.github/workflows/data/robot_ws.tar"
+        files: "./.github/workflows/data/robot_ws.tar, ./.github/workflows/data/robot_ws/build, ./.github/workflows/data/robot_ws/install"
         allow_failure: true
         
     - name: Build and bundle simulation_ws
@@ -79,7 +79,7 @@ jobs:
       id: check_simulation_ws_files
       uses: andstor/file-existence-action@v1
       with:
-        files: "./.github/workflows/data/simulation_ws.tar"
+        files: "./.github/workflows/data/simulation_ws.tar, ./.github/workflows/data/simulation_ws/build, ./.github/workflows/data/simulation_ws/install"
         allow_failure: true
         
     - name: Check source file existence
@@ -88,7 +88,7 @@ jobs:
       with:
         files: "./.github/workflows/data/sources.zip, ./.github/workflows/data/sources.tar.gz"
     
-    - name: All files exists
+    - name: Check all files exists
       if: steps.check_robot_ws_files.outputs.files_exists == 'true' && steps.check_simulation_ws_files.outputs.files_exists == 'true' && steps.check_source_files.outputs.files_exists == 'true'
       # Only runs if all of the files exists
       run: echo All files exists!
