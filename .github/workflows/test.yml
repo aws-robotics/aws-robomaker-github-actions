@@ -14,29 +14,42 @@ jobs:
     runs-on: ubuntu-latest
     
     strategy:
-      fail-fast: false
+      fail-fast: false      
+      matrix:
+        distro: ['kinetic', 'melodic']
+        gazebo: [7, 9]
+        include:
+        - distro: kinetic
+          gazebo: 7
+          ubuntu_distro: xenial
+        - distro: kinetic
+          gazebo: 9
+          ubuntu_distro: xenial
+        - distro: melodic
+          gazebo: 9
+          ubuntu_distro: bionic
+        exclude:
+        - distro: 'melodic'
+          gazebo: 7      
       
-    container: ubuntu:bionic
+    container: 
+      image: rostooling/setup-ros-docker:ubuntu-${{ matrix.ubuntu_distro }}-ros-${{ matrix.distro }}-ros-base-latest
       
     steps:    
     - uses: actions/checkout@v2
-      with:
-        path: action
     - uses: actions/setup-node@v1
       with:
         node-version: '12.x'
     - run: npm install
-      working-directory: ./action/robomaker-sample-app-ci
+      working-directory: ./robomaker-sample-app-ci
     - run: npm run build
-      working-directory: ./action/robomaker-sample-app-ci
-    - uses: ros-tooling/setup-ros@0.0.25
-      with:
-        required-ros-distributions: melodic
-    - run: node ./action/robomaker-sample-app-ci/dist/index.js      
+      working-directory: ./robomaker-sample-app-ci
+    - run: node ./robomaker-sample-app-ci/dist/index.js      
+      name: Build and bundle robot_ws
       env:
-        INPUT_ROS-DISTRO: melodic
-        INPUT_GAZEBO-VERSION: 9
-        INPUT_WORKSPACE-DIR: action/.github/workflows/data/simulation_ws
+        INPUT_ROS-DISTRO: ${{ matrix.distro }}
+        INPUT_GAZEBO-VERSION: ${{ matrix.gazebo }}
+        INPUT_WORKSPACE-DIR: ./.github/workflows/data/robot_ws
         INPUT_GENERATE-SOURCES: true
       
         
