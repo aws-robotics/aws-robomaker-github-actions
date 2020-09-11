@@ -65,7 +65,7 @@ jobs:
       id: check_robot_ws_files
       uses: andstor/file-existence-action@v1
       with:
-        files: "./.github/workflows/data/robot_ws.tar, ./.github/workflows/data/robot_ws/build, ./.github/workflows/data/robot_ws/install"
+        files: "./.github/workflows/data/robot_ws.tar, ./.github/workflows/data/robot_ws/build, ./.github/workflows/data/robot_ws/install, ./.github/workflows/data/robot_ws/src/deps"
         allow_failure: true
         
     - name: Build and bundle simulation_ws
@@ -79,7 +79,7 @@ jobs:
       id: check_simulation_ws_files
       uses: andstor/file-existence-action@v1
       with:
-        files: "./.github/workflows/data/simulation_ws.tar, ./.github/workflows/data/simulation_ws/build, ./.github/workflows/data/simulation_ws/install"
+        files: "./.github/workflows/data/simulation_ws.tar, ./.github/workflows/data/simulation_ws/build, ./.github/workflows/data/simulation_ws/install, ./.github/workflows/data/simulation_ws/src/deps"
         allow_failure: true
         
     - name: Check source file existence
