@@ -36,17 +36,19 @@ jobs:
       image: rostooling/setup-ros-docker:ubuntu-${{ matrix.ubuntu_distro }}-ros-${{ matrix.distro }}-ros-base-latest
       
     steps:    
-    - name: Checkout Branch
+    - name: Checkout code
       uses: actions/checkout@v1
     - name: Setup Permissions
       run: |
-        # TODO(ros-tooling/setup-ros-docker#7): calling chown is necessary for now
+        # Due to user permisson issue, calling chown is necessary for now
+        # Related issue: https://github.com/actions/checkout/issues/47
+        # TODO(ros-tooling/setup-ros-docker#7): 
         sudo chown -R rosbuild:rosbuild "$HOME" .      
-    - name: Setup NodeJS
+    - name: Setup nodeJS
       uses: actions/setup-node@v1
       with:
         node-version: '12.x'
-    - name: Install NodeJS packages
+    - name: Install nodeJS packages
       run: npm install
       working-directory: ./robomaker-sample-app-ci
     - name: Build test script
@@ -59,5 +61,12 @@ jobs:
         INPUT_GAZEBO-VERSION: ${{ matrix.gazebo }}
         INPUT_WORKSPACE-DIR: ./.github/workflows/data/robot_ws
         INPUT_GENERATE-SOURCES: true
+    - name: Build and bundle simulation_ws
+      run: node ./robomaker-sample-app-ci/dist/index.js
+      env:
+        INPUT_ROS-DISTRO: ${{ matrix.distro }}
+        INPUT_GAZEBO-VERSION: ${{ matrix.gazebo }}
+        INPUT_WORKSPACE-DIR: ./.github/workflows/data/simulation_ws
+        INPUT_GENERATE-SOURCES: false
       
         
