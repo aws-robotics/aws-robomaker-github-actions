@@ -41,7 +41,7 @@ jobs:
 | ------------- | ------------- | ------------- | ------------- |
 | `DEST_FILE_CONTENT` | The content of the file, in binary object format. | `env` | **Yes** |
 | `DEST_FILE_PATH` | The name of the file you want to add or update, including the relative path to the file in the repository. | `env` | **Yes** |
-| `COMMIT_MSG` | A message about why this file was added or updated. Although it is optional, a message makes the commit history for your repository more useful. | `env` | **Yes** |
+| `COMMIT_MSG` | A message about why this file was added or updated. Although it is optional, a message makes the commit history for your repository more useful. | `env` | **No** |
 | `USER_EMAIL` | Email-ID to be associated with this commit | `env` | **Yes** |
 | `USER_NAME` | Username to be associated with this commit | `env` | **Yes** |
 
