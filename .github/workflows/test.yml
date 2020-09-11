@@ -57,7 +57,7 @@ jobs:
       run: npm run build
       working-directory: ./robomaker-sample-app-ci
       
-      # Trigger to run robomaker-sample-app-ci action script
+    # Trigger to run robomaker-sample-app-ci action script
     - name: Build and bundle robot_ws      
       run: node ./robomaker-sample-app-ci/dist/index.js
       env:
