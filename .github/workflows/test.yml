@@ -13,8 +13,7 @@ jobs:
   test_robomaker-sample-app-ci:
     runs-on: ubuntu-latest
     
-    strategy:
-      fail-fast: false      
+    strategy:      
       matrix:
         distro: ['kinetic', 'melodic']
         gazebo: [7, 9]
@@ -54,6 +53,7 @@ jobs:
     - name: Build test script
       run: npm run build
       working-directory: ./robomaker-sample-app-ci
+      
     - name: Build and bundle robot_ws
       run: node ./robomaker-sample-app-ci/dist/index.js
       env:
@@ -61,6 +61,12 @@ jobs:
         INPUT_GAZEBO-VERSION: ${{ matrix.gazebo }}
         INPUT_WORKSPACE-DIR: ./.github/workflows/data/robot_ws
         INPUT_GENERATE-SOURCES: true
+    - name: Check robot_ws file existence
+      id: check_robot_ws_files
+      uses: andstor/file-existence-action@v1
+      with:
+        files: "./.github/workflows/data/robot_ws.tar"
+        
     - name: Build and bundle simulation_ws
       run: node ./robomaker-sample-app-ci/dist/index.js
       env:
@@ -68,5 +74,21 @@ jobs:
         INPUT_GAZEBO-VERSION: ${{ matrix.gazebo }}
         INPUT_WORKSPACE-DIR: ./.github/workflows/data/simulation_ws
         INPUT_GENERATE-SOURCES: false
+    - name: Check simulation_ws file existence
+      id: check_simulation_ws_files
+      uses: andstor/file-existence-action@v1
+      with:
+        files: "./.github/workflows/data/simulation_ws.tar"
+        
+    - name: Check source file existence
+      id: check_source_files
+      uses: andstor/file-existence-action@v1
+      with:
+        files: "./.github/workflows/data/sources.zip, ./.github/workflows/data/sources.tar.gz"
+    
+    - name: All files exists
+      if: steps.check_robot_ws_files.outputs.files_exists == 'true' && steps.check_simulation_ws_files.outputs.files_exists == 'true' && && steps.check_source_files.outputs.files_exists == 'true'
+      # Only runs if all of the files exists
+      run: echo All files exists!
       
         
