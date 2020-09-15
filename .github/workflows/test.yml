@@ -40,12 +40,20 @@ jobs:
     # The test steps are duplicated because github workflow does not support reusable step (with parameter yet)
     # We also can use matrix to run tests with different parameters but it is overkill for this
     steps:    
+    - name: Checkout SA
+      uses: actions/checkout@v1
+      with:
+        repository: aws-robotics/aws-robomaker-sample-application-helloworld
+        path: sample
     - name: Checkout code
       uses: actions/checkout@v1
+      with:
+        path: action
     - name: Setup permissions
       run: |
         # Due to user permisson issue, calling chown is necessary for now
         # Related issue: https://github.com/actions/checkout/issues/47
+        # Note: rosbuild is the user of the docker image
         # TODO(ros-tooling/setup-ros-docker#7): 
         sudo chown -R rosbuild:rosbuild "$HOME" .      
     - name: Setup nodeJS
@@ -54,41 +62,41 @@ jobs:
         node-version: '12.x'
     - name: Install nodeJS packages
       run: npm install
-      working-directory: ./robomaker-sample-app-ci
+      working-directory: ./action/robomaker-sample-app-ci
     - name: Build test script
       run: npm run build
-      working-directory: ./robomaker-sample-app-ci
+      working-directory: ./action/robomaker-sample-app-ci
       
     # Trigger to run robomaker-sample-app-ci action script
     - name: Build and bundle robot_ws      
-      uses: ./robomaker-sample-app-ci
+      uses: ./action/robomaker-sample-app-ci
       with:
         ros-distro: ${{ matrix.distro }}
         gazebo-version: ${{ matrix.gazebo }}
-        workspace-dir: ./.github/workflows/data/robot_ws
+        workspace-dir: ./sample/aws-robomaker-sample-application-helloworld/robot_ws
         generate-souces: true  
     # Expectation: bundle file, build files, and dependencies all exist
     - name: Check robot_ws file existence
       id: check_robot_ws_files
       uses: andstor/file-existence-action@87d74d4
       with:
-        files: "./.github/workflows/data/robot_ws.tar, ./.github/workflows/data/robot_ws/build, ./.github/workflows/data/robot_ws/install, ./.github/workflows/data/robot_ws/src/deps"
+        files: "./sample/aws-robomaker-sample-application-helloworld/robot_ws.tar, ./sample/aws-robomaker-sample-application-helloworld/robot_ws/build, ./sample/aws-robomaker-sample-application-helloworld/robot_ws/install, ./sample/aws-robomaker-sample-application-helloworld/robot_ws/src/deps"
         allow_failure: true
         
     # Trigger to run robomaker-sample-app-ci action script        
     - name: Build and bundle simulation_ws
-      uses: ./robomaker-sample-app-ci
+      uses: ./action/robomaker-sample-app-ci
       with:
         ros-distro: ${{ matrix.distro }}
         gazebo-version: ${{ matrix.gazebo }}
-        workspace-dir: ./.github/workflows/data/simulation_ws
+        workspace-dir: ./sample/aws-robomaker-sample-application-helloworld/simulation_ws
         generate-souces: false        
     # Expectation: bundle file, build files, and dependencies all exist        
     - name: Check simulation_ws file existence
       id: check_simulation_ws_files
       uses: andstor/file-existence-action@87d74d4
       with:
-        files: "./.github/workflows/data/simulation_ws.tar, ./.github/workflows/data/simulation_ws/build, ./.github/workflows/data/simulation_ws/install, ./.github/workflows/data/simulation_ws/src/deps"
+        files: "./sample/aws-robomaker-sample-application-helloworld/simulation_ws.tar, ./sample/aws-robomaker-sample-application-helloworld/simulation_ws/build, ./sample/aws-robomaker-sample-application-helloworld/simulation_ws/install, ./sample/aws-robomaker-sample-application-helloworld/simulation_ws/src/deps"
         allow_failure: true
         
     # Expectation: source files exist    
@@ -96,7 +104,7 @@ jobs:
       id: check_source_files
       uses: andstor/file-existence-action@87d74d4
       with:        
-        files: "./.github/workflows/data/sources.zip, ./.github/workflows/data/sources.tar.gz"
+        files: "./sample/aws-robomaker-sample-application-helloworld/sources.zip, ./sample/aws-robomaker-sample-application-helloworld/sources.tar.gz"
     
     - name: Check all files exists
       if: steps.check_robot_ws_files.outputs.files_exists == 'true' && steps.check_simulation_ws_files.outputs.files_exists == 'true' && steps.check_source_files.outputs.files_exists == 'true'
