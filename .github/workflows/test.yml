@@ -77,12 +77,12 @@ jobs:
         
     # Trigger to run robomaker-sample-app-ci action script        
     - name: Build and bundle simulation_ws
-      run: node ./robomaker-sample-app-ci/dist/index.js
-      env:
-        INPUT_ROS-DISTRO: ${{ matrix.distro }}
-        INPUT_GAZEBO-VERSION: ${{ matrix.gazebo }}
-        INPUT_WORKSPACE-DIR: ./.github/workflows/data/simulation_ws
-        INPUT_GENERATE-SOURCES: false        
+    - uses: ./robomaker-sample-app-ci
+      with:
+        ros-distro: ${{ matrix.distro }}
+        gazebo-version: ${{ matrix.gazebo }}
+        workspace-dir: ./.github/workflows/data/simulation_ws
+        generate-souces: false        
     # Expectation: bundle file, build files, and dependencies all exist        
     - name: Check simulation_ws file existence
       id: check_simulation_ws_files
