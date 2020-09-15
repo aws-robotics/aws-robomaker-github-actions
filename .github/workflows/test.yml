@@ -42,14 +42,14 @@ jobs:
     steps:    
     # Checkout SA ros1 branch into sample folder
     - name: Checkout hello world sample app
-      uses: actions/checkout@v1
+      uses: actions/checkout@v2
       with:
         repository: aws-robotics/aws-robomaker-sample-application-helloworld
         path: sample
         ref: ros1
     # Checkout action code into action folder
     - name: Checkout action code
-      uses: actions/checkout@v1
+      uses: actions/checkout@v2
       with:
         path: action
     - name: Setup permissions
