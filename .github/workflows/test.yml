@@ -77,7 +77,7 @@ jobs:
         ros-distro: ${{ matrix.distro }}
         gazebo-version: ${{ matrix.gazebo }}
         workspace-dir: ./sample/aws-robomaker-sample-application-helloworld/robot_ws
-        generate-souces: true  
+        generate-sources: true  
     # Expectation: bundle file, build files, and dependencies all exist
     - name: Check robot_ws file existence
       id: check_robot_ws_files
@@ -93,7 +93,7 @@ jobs:
         ros-distro: ${{ matrix.distro }}
         gazebo-version: ${{ matrix.gazebo }}
         workspace-dir: ./sample/aws-robomaker-sample-application-helloworld/simulation_ws
-        generate-souces: false        
+        generate-sources: false        
     # Expectation: bundle file, build files, and dependencies all exist        
     - name: Check simulation_ws file existence
       id: check_simulation_ws_files
