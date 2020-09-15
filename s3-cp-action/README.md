@@ -21,7 +21,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@master
     - name: Upload binary to S3 bucket
-      uses: aws-robotics/codecommit-put-file-action/s3-cp-action@v2.0.0
+      uses: aws-robotics/aws-robomaker-github-actions/s3-cp-action@v2.0.0
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
