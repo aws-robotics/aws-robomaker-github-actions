@@ -28,7 +28,6 @@ if [ -n "$BRANCH_COMMIT_ID" ]; then
 fi
 
 aws codecommit put-file --repository-name "$AWS_CODECOMMIT_REPO_NAME" --branch-name "$AWS_CODECOMMIT_BRANCH_NAME" --file-content "$DEST_FILE_CONTENT" --file-path "$DEST_FILE_PATH" --commit-message "$COMMIT_MSG" --name "$USER_NAME" --email "$USER_EMAIL" $PARENT_COMMIT_FLAG
-
 rm -rf ~/.aws
 
 set +e
