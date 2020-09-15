@@ -76,14 +76,14 @@ jobs:
       with:
         ros-distro: ${{ matrix.distro }}
         gazebo-version: ${{ matrix.gazebo }}
-        workspace-dir: ./sample/aws-robomaker-sample-application-helloworld/robot_ws
+        workspace-dir: ./sample/robot_ws
         generate-sources: true  
     # Expectation: bundle file, build files, and dependencies all exist
     - name: Check robot_ws file existence
       id: check_robot_ws_files
       uses: andstor/file-existence-action@87d74d4
       with:
-        files: "./sample/aws-robomaker-sample-application-helloworld/robot_ws.tar, ./sample/aws-robomaker-sample-application-helloworld/robot_ws/build, ./sample/aws-robomaker-sample-application-helloworld/robot_ws/install, ./sample/aws-robomaker-sample-application-helloworld/robot_ws/src/deps"
+        files: "./sample/robot_ws.tar, ./sample/robot_ws/build, ./sample/robot_ws/install, ./sample/robot_ws/src/deps"
         allow_failure: true
         
     # Trigger to run robomaker-sample-app-ci action script        
@@ -92,14 +92,14 @@ jobs:
       with:
         ros-distro: ${{ matrix.distro }}
         gazebo-version: ${{ matrix.gazebo }}
-        workspace-dir: ./sample/aws-robomaker-sample-application-helloworld/simulation_ws
+        workspace-dir: ./sample/simulation_ws
         generate-sources: false        
     # Expectation: bundle file, build files, and dependencies all exist        
     - name: Check simulation_ws file existence
       id: check_simulation_ws_files
       uses: andstor/file-existence-action@87d74d4
       with:
-        files: "./sample/aws-robomaker-sample-application-helloworld/simulation_ws.tar, ./sample/aws-robomaker-sample-application-helloworld/simulation_ws/build, ./sample/aws-robomaker-sample-application-helloworld/simulation_ws/install, ./sample/aws-robomaker-sample-application-helloworld/simulation_ws/src/deps"
+        files: "./sample/simulation_ws.tar, ./sample/simulation_ws/build, ./sample/simulation_ws/install, ./sample/simulation_ws/src/deps"
         allow_failure: true
         
     # Expectation: source files exist    
@@ -107,7 +107,7 @@ jobs:
       id: check_source_files
       uses: andstor/file-existence-action@87d74d4
       with:        
-        files: "./sample/aws-robomaker-sample-application-helloworld/sources.zip, ./sample/aws-robomaker-sample-application-helloworld/sources.tar.gz"
+        files: "./sample/sources.zip, ./sample/sources.tar.gz"
     
     - name: Check all files exists
       if: steps.check_robot_ws_files.outputs.files_exists == 'true' && steps.check_simulation_ws_files.outputs.files_exists == 'true' && steps.check_source_files.outputs.files_exists == 'true'
