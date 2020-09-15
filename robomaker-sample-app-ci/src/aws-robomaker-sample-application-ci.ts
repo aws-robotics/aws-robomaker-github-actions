@@ -188,7 +188,7 @@ async function build() {
 
 async function bundle() {
   try {
-    const bundleFilename = WORKSPACE_DIRECTORY.split(path.sep).pop()    
+    const bundleFilename = path.basename(WORKSPACE_DIRECTORY); 
     await exec.exec("colcon", ["bundle", "--build-base", "build", "--install-base", "install", "--bundle-base", "bundle"], getWorkingDirExecOptions());
     await exec.exec("mv", ["bundle/output.tar", `../${bundleFilename}.tar`], getWorkingDirExecOptions());
     await exec.exec("rm", ["-rf", "bundle"], getWorkingDirExecOptions());  // github actions have been failing with no disk space

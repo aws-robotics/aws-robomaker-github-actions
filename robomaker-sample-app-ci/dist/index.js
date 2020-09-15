@@ -689,10 +689,16 @@ function loadROSEnvVariables() {
         yield exec.exec("bash", ["-c", `source /opt/ros/${ROS_DISTRO}/setup.bash && printenv`], options);
     });
 }
-function getExecOptions(listenerBuffers) {
+function getWorkingDirExecOptions(listenerBuffers) {
+    return getExecOptions(WORKSPACE_DIRECTORY, ".", listenerBuffers);
+}
+function getWorkingDirParentExecOptions(listenerBuffers) {
+    return getExecOptions(WORKSPACE_DIRECTORY, "..", listenerBuffers);
+}
+function getExecOptions(workingDir, extraPath, listenerBuffers) {
     var listenerBuffers = listenerBuffers || {};
     const execOptions = {
-        cwd: WORKSPACE_DIRECTORY,
+        cwd: path.join(workingDir, extraPath),
         env: Object.assign({}, process.env, ROS_ENV_VARIABLES)
     };
     if (listenerBuffers) {
@@ -715,7 +721,7 @@ function getSampleAppVersion() {
             yield exec.exec("bash", [
                 "-c",
                 "find ../robot_ws -name package.xml -exec grep -Po '(?<=<version>)[^\\s<>]*(?=</version>)' {} +"
-            ], getExecOptions(grepAfter));
+            ], getWorkingDirExecOptions(grepAfter));
             version = grepAfter.stdout.trim();
         }
         catch (err) {
@@ -732,8 +738,8 @@ function fetchRosinstallDependencies() {
         // Download dependencies not in apt if .rosinstall exists
         try {
             if (fs.existsSync(path.join(WORKSPACE_DIRECTORY, '.rosinstall'))) {
-                yield exec.exec("vcs", ["import", "--input", ".rosinstall"], getExecOptions());
-                yield exec.exec("colcon", ["list", "--names-only"], getExecOptions(colconListAfter));
+                yield exec.exec("vcs", ["import", "--input", ".rosinstall"], getWorkingDirExecOptions());
+                yield exec.exec("colcon", ["list", "--names-only"], getWorkingDirExecOptions(colconListAfter));
                 const packagesAfter = colconListAfter.stdout.split("\n");
                 packagesAfter.forEach(packageName => {
                     packages.push(packageName.trim());
@@ -816,13 +822,9 @@ function prepare_sources() {
                 "README*",
                 "roboMakerSettings.json"
             ];
-            const execOptions = {
-                cwd: path.join(WORKSPACE_DIRECTORY, ".."),
-                env: Object.assign({}, process.env, ROS_ENV_VARIABLES)
-            };
             const sourceIncludesStr = sourceIncludes.join(" ");
-            yield exec.exec("bash", ["-c", `zip -r sources.zip ${sourceIncludesStr}`], execOptions);
-            yield exec.exec("bash", ["-c", `tar cvzf sources.tar.gz ${sourceIncludesStr}`], execOptions);
+            yield exec.exec("bash", ["-c", `zip -r sources.zip ${sourceIncludesStr}`], getWorkingDirParentExecOptions());
+            yield exec.exec("bash", ["-c", `tar cvzf sources.tar.gz ${sourceIncludesStr}`], getWorkingDirParentExecOptions());
         }
         catch (error) {
             core.setFailed(error.message);
@@ -832,9 +834,9 @@ function prepare_sources() {
 function build() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            yield exec.exec("rosdep", ["install", "--from-paths", ".", "--ignore-src", "-r", "-y", "--rosdistro", ROS_DISTRO], getExecOptions());
+            yield exec.exec("rosdep", ["install", "--from-paths", ".", "--ignore-src", "-r", "-y", "--rosdistro", ROS_DISTRO], getWorkingDirExecOptions());
             console.log(`Building the following packages: ${PACKAGES}`);
-            yield exec.exec("colcon", ["build", "--build-base", "build", "--install-base", "install"], getExecOptions());
+            yield exec.exec("colcon", ["build", "--build-base", "build", "--install-base", "install"], getWorkingDirExecOptions());
         }
         catch (error) {
             core.setFailed(error.message);
@@ -844,10 +846,10 @@ function build() {
 function bundle() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const bundleFilename = WORKSPACE_DIRECTORY.split(path.sep).pop();
-            yield exec.exec("colcon", ["bundle", "--build-base", "build", "--install-base", "install", "--bundle-base", "bundle"], getExecOptions());
-            yield exec.exec("mv", ["bundle/output.tar", `../${bundleFilename}.tar`], getExecOptions());
-            yield exec.exec("rm", ["-rf", "bundle"], getExecOptions()); // github actions have been failing with no disk space
+            const bundleFilename = path.basename(WORKSPACE_DIRECTORY);
+            yield exec.exec("colcon", ["bundle", "--build-base", "build", "--install-base", "install", "--bundle-base", "bundle"], getWorkingDirExecOptions());
+            yield exec.exec("mv", ["bundle/output.tar", `../${bundleFilename}.tar`], getWorkingDirExecOptions());
+            yield exec.exec("rm", ["-rf", "bundle"], getWorkingDirExecOptions()); // github actions have been failing with no disk space
         }
         catch (error) {
             core.setFailed(error.message);
