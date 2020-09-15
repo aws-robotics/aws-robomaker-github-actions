@@ -21,7 +21,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@master
     - name: Put file into a codecommit repo
-      uses: aws-robotics/robomaker-sample-app-ci/codecommit-put-file-action@v2.0.0
+      uses: aws-robotics//codecommit-put-file-action/codecommit-put-file-action@v2.0.0
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
