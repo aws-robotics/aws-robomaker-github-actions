@@ -30,10 +30,19 @@ async function loadROSEnvVariables() {
   await exec.exec("bash", ["-c", `source /opt/ros/${ROS_DISTRO}/setup.bash && printenv`], options)
 }
 
-function getExecOptions(listenerBuffers?): ExecOptions {
+
+function getWorkingDirExecOptions(listenerBuffers?): ExecOptions {
+  return getExecOptions(WORKSPACE_DIRECTORY, ".", listenerBuffers);
+}
+
+function getWorkingDirParentExecOptions(listenerBuffers?): ExecOptions {
+  return getExecOptions(WORKSPACE_DIRECTORY, "..", listenerBuffers);
+}
+
+function getExecOptions(workingDir, extraPath, listenerBuffers?): ExecOptions {
   var listenerBuffers = listenerBuffers || {};
   const execOptions: ExecOptions = {
-    cwd: WORKSPACE_DIRECTORY,
+    cwd: path.join(workingDir, extraPath),
     env: Object.assign({}, process.env, ROS_ENV_VARIABLES)
   };
   if (listenerBuffers) {
@@ -56,7 +65,7 @@ async function getSampleAppVersion() : Promise<string> {
     await exec.exec("bash", [
         "-c",
          "find ../robot_ws -name package.xml -exec grep -Po '(?<=<version>)[^\\s<>]*(?=</version>)' {} +"],
-      getExecOptions(grepAfter));
+      getWorkingDirExecOptions(grepAfter));
     version = grepAfter.stdout.trim();
   } catch(err) {
     console.error(err);
@@ -71,8 +80,8 @@ async function fetchRosinstallDependencies(): Promise<string[]> {
   // Download dependencies not in apt if .rosinstall exists
   try {
     if (fs.existsSync(path.join(WORKSPACE_DIRECTORY, '.rosinstall'))) {
-      await exec.exec("vcs", ["import", "--input", ".rosinstall"], getExecOptions());
-      await exec.exec("colcon", ["list", "--names-only"], getExecOptions(colconListAfter));
+      await exec.exec("vcs", ["import", "--input", ".rosinstall"], getWorkingDirExecOptions());
+      await exec.exec("colcon", ["list", "--names-only"], getWorkingDirExecOptions(colconListAfter));
       const packagesAfter = colconListAfter.stdout.split("\n");
       packagesAfter.forEach(packageName => {
         packages.push(packageName.trim());
@@ -157,10 +166,10 @@ async function prepare_sources() {
       "README*",
       "roboMakerSettings.json"
     ];
-
-    const sourceIncludesStr = sourceIncludes.join(" ");
-    await exec.exec("bash", ["-c", `zip -r sources.zip ${sourceIncludesStr}`]);
-    await exec.exec("bash", ["-c", `tar cvzf sources.tar.gz ${sourceIncludesStr}`]);
+    
+    const sourceIncludesStr = sourceIncludes.join(" ");    
+    await exec.exec("bash", ["-c", `zip -r sources.zip ${sourceIncludesStr}`], getWorkingDirParentExecOptions());
+    await exec.exec("bash", ["-c", `tar cvzf sources.tar.gz ${sourceIncludesStr}`], getWorkingDirParentExecOptions());
   } catch (error) {
     core.setFailed(error.message);
   }
@@ -168,10 +177,10 @@ async function prepare_sources() {
 
 async function build() {
   try {
-    await exec.exec("rosdep", ["install", "--from-paths", ".", "--ignore-src", "-r", "-y", "--rosdistro", ROS_DISTRO], getExecOptions());
+    await exec.exec("rosdep", ["install", "--from-paths", ".", "--ignore-src", "-r", "-y", "--rosdistro", ROS_DISTRO], getWorkingDirExecOptions());
 
     console.log(`Building the following packages: ${PACKAGES}`);
-    await exec.exec("colcon", ["build", "--build-base", "build", "--install-base", "install"], getExecOptions());
+    await exec.exec("colcon", ["build", "--build-base", "build", "--install-base", "install"], getWorkingDirExecOptions());
   } catch (error) {
     core.setFailed(error.message);
   }
@@ -179,9 +188,10 @@ async function build() {
 
 async function bundle() {
   try {
-    await exec.exec("colcon", ["bundle", "--build-base", "build", "--install-base", "install", "--bundle-base", "bundle"], getExecOptions());
-    await exec.exec("mv", ["bundle/output.tar", `../${WORKSPACE_DIRECTORY}.tar`], getExecOptions());
-    await exec.exec("rm", ["-rf", "bundle"], getExecOptions());  // github actions have been failing with no disk space
+    const bundleFilename = path.basename(WORKSPACE_DIRECTORY); 
+    await exec.exec("colcon", ["bundle", "--build-base", "build", "--install-base", "install", "--bundle-base", "bundle"], getWorkingDirExecOptions());
+    await exec.exec("mv", ["bundle/output.tar", `../${bundleFilename}.tar`], getWorkingDirExecOptions());
+    await exec.exec("rm", ["-rf", "bundle"], getWorkingDirExecOptions());  // github actions have been failing with no disk space
   } catch (error) {
     core.setFailed(error.message);
   }

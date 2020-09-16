@@ -1,0 +1,116 @@
+name: "Test aws-robomaker-github-actions"
+
+on:
+  push:
+  pull_request:
+    branches:
+      - master
+      - 'releases/*'
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  test_robomaker-sample-app-ci:
+    runs-on: ubuntu-latest
+    
+    strategy:      
+      matrix:
+        distro: ['kinetic', 'melodic']
+        gazebo: [7, 9]
+        include:
+        - distro: kinetic
+          gazebo: 7
+          ubuntu_distro: xenial
+        - distro: kinetic
+          gazebo: 9
+          ubuntu_distro: xenial
+        - distro: melodic
+          gazebo: 9
+          ubuntu_distro: bionic
+        exclude:
+        - distro: 'melodic'
+          gazebo: 7      
+      
+    container: 
+      image: rostooling/setup-ros-docker:ubuntu-${{ matrix.ubuntu_distro }}-ros-${{ matrix.distro }}-ros-base-latest
+      
+    # NOTES: We run 2 tests for robot_ws and simulation_ws
+    # The test steps are duplicated because github workflow does not support reusable step (with parameter yet)
+    # We also can use matrix to run tests with different parameters but it is overkill for this
+    steps:    
+    - name: Setup permissions
+      run: |
+        # Due to user permisson issue, calling chown is necessary for now
+        # Related issue: https://github.com/actions/checkout/issues/47
+        # Note: rosbuild is the user of the docker image
+        # TODO(ros-tooling/setup-ros-docker#7): 
+        sudo chown -R rosbuild:rosbuild "$HOME" .         
+    # Checkout SA ros1 branch into default root folder
+    - name: Checkout hello world sample app
+      uses: actions/checkout@v2
+      with:
+        repository: aws-robotics/aws-robomaker-sample-application-helloworld
+        ref: ros1
+    # Checkout action code into action folder
+    - name: Checkout action code
+      uses: actions/checkout@v2
+      with:
+        path: action    
+    - name: Setup nodeJS
+      uses: actions/setup-node@v1
+      with:
+        node-version: '12.x'
+    - name: Install nodeJS packages
+      run: npm install
+      working-directory: ./action/robomaker-sample-app-ci
+    - name: Build test script
+      run: npm run build
+      working-directory: ./action/robomaker-sample-app-ci
+      
+    # Trigger to run robomaker-sample-app-ci action script
+    - name: Build and bundle robot_ws      
+      uses: ./action/robomaker-sample-app-ci
+      with:
+        ros-distro: ${{ matrix.distro }}
+        gazebo-version: ${{ matrix.gazebo }}
+        workspace-dir: ./robot_ws
+        generate-sources: true  
+    # Expectation: bundle file, build files, and dependencies all exist
+    - name: Check robot_ws file existence
+      id: check_robot_ws_files
+      uses: andstor/file-existence-action@87d74d4
+      with:
+        files: "./robot_ws.tar, ./robot_ws/build, ./robot_ws/install, ./robot_ws/src/deps"
+        allow_failure: true
+        
+    # Trigger to run robomaker-sample-app-ci action script        
+    - name: Build and bundle simulation_ws
+      uses: ./action/robomaker-sample-app-ci
+      with:
+        ros-distro: ${{ matrix.distro }}
+        gazebo-version: ${{ matrix.gazebo }}
+        workspace-dir: ./simulation_ws
+        generate-sources: false        
+    # Expectation: bundle file, build files, and dependencies all exist        
+    - name: Check simulation_ws file existence
+      id: check_simulation_ws_files
+      uses: andstor/file-existence-action@87d74d4
+      with:
+        files: "./simulation_ws.tar, ./simulation_ws/build, ./simulation_ws/install, ./simulation_ws/src/deps"
+        allow_failure: true
+        
+    # Expectation: source files exist    
+    - name: Check source file existence
+      id: check_source_files
+      uses: andstor/file-existence-action@87d74d4
+      with:        
+        files: "./sources.zip, ./sources.tar.gz"
+    
+    - name: Check all files exists
+      if: steps.check_robot_ws_files.outputs.files_exists == 'true' && steps.check_simulation_ws_files.outputs.files_exists == 'true' && steps.check_source_files.outputs.files_exists == 'true'
+      # Only runs if all of the files exists
+      run: echo All files exists!
+      
+        
