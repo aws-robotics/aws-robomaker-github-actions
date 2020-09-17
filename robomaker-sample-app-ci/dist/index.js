@@ -738,9 +738,8 @@ function fetchRosinstallDependencies() {
         // Download dependencies not in apt if .rosinstall exists
         try {
             for (let workspace of ["robot_ws", "simulation_ws"]) {
-                const execOptions: ExecOptions = {cwd: workspace};
                 if (fs.existsSync(path.join(workspace, '.rosinstall'))) {
-                  await exec.exec("vcs", ["import", "--input", ".rosinstall"], execOptions);
+                  await exec.exec("vcs", ["import", "--input", ".rosinstall"], {cwd: workspace});
                 }
             }
             if (fs.existsSync(path.join(WORKSPACE_DIRECTORY, '.rosinstall'))) {
