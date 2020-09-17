@@ -18,7 +18,7 @@ jobs:
     image: rostooling/setup-ros-docker:ubuntu-xenial-ros-kinetic-ros-base-latest
     steps:
     - name: Build
-      uses: aws-robotics/aws-robomaker-github-actions@1.0.0
+      uses: aws-robotics/aws-robomaker-github-actions/robomaker-sample-app-ci@2.3.0
       with:
         ros-distro: kinetic
         gazebo-version: 7
@@ -31,7 +31,7 @@ jobs:
       image: ros:kinetic-ros-core
     steps:
     - name: Build
-      uses: aws-robotics/aws-robomaker-github-actions@1.0.0
+      uses: aws-robotics/aws-robomaker-github-actions/robomaker-sample-app-ci@2.3.0
       with:
         ros-distro: kinetic
         gazebo-version: 7
