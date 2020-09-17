@@ -64,14 +64,19 @@ async function getSampleAppVersion() : Promise<string> {
   return Promise.resolve(version);
 }
 
-// If .rosinstall exists, run 'rosws update' and return a list of names of the packages that were added.
+// If .rosinstall exists, run 'vcs import' and return a list of names of the packages that were added in both workspaces.
 async function fetchRosinstallDependencies(): Promise<string[]> {
   let colconListAfter = {stdout: '', stderr: ''};
   let packages: string[] = [];
   // Download dependencies not in apt if .rosinstall exists
   try {
+    for (let workspace of ["robot_ws", "simulation_ws"]) {
+      const execOptions: ExecOptions = {cwd: workspace};
+      if (fs.existsSync(path.join(workspace, '.rosinstall'))) {
+        await exec.exec("vcs", ["import", "--input", ".rosinstall"], execOptions);
+      }
+    }
     if (fs.existsSync(path.join(WORKSPACE_DIRECTORY, '.rosinstall'))) {
-      await exec.exec("vcs", ["import", "--input", ".rosinstall"], getExecOptions());
       await exec.exec("colcon", ["list", "--names-only"], getExecOptions(colconListAfter));
       const packagesAfter = colconListAfter.stdout.split("\n");
       packagesAfter.forEach(packageName => {
