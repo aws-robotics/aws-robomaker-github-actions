@@ -737,8 +737,12 @@ function fetchRosinstallDependencies() {
         let packages = [];
         // Download dependencies not in apt if .rosinstall exists
         try {
+            for (let workspace of ["robot_ws", "simulation_ws"]) {
+                if (fs.existsSync(path.join(workspace, '.rosinstall'))) {
+                  yield exec.exec("vcs", ["import", "--input", ".rosinstall"], {cwd: workspace});
+                }
+            }
             if (fs.existsSync(path.join(WORKSPACE_DIRECTORY, '.rosinstall'))) {
-                yield exec.exec("vcs", ["import", "--input", ".rosinstall"], getWorkingDirExecOptions());
                 yield exec.exec("colcon", ["list", "--names-only"], getWorkingDirExecOptions(colconListAfter));
                 const packagesAfter = colconListAfter.stdout.split("\n");
                 packagesAfter.forEach(packageName => {
@@ -752,6 +756,7 @@ function fetchRosinstallDependencies() {
         return Promise.resolve(packages);
     });
 }
+
 function setup() {
     return __awaiter(this, void 0, void 0, function* () {
         try {

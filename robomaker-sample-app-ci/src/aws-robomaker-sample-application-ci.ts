@@ -30,7 +30,6 @@ async function loadROSEnvVariables() {
   await exec.exec("bash", ["-c", `source /opt/ros/${ROS_DISTRO}/setup.bash && printenv`], options)
 }
 
-
 function getWorkingDirExecOptions(listenerBuffers?): ExecOptions {
   return getExecOptions(WORKSPACE_DIRECTORY, ".", listenerBuffers);
 }
@@ -73,14 +72,21 @@ async function getSampleAppVersion() : Promise<string> {
   return Promise.resolve(version);
 }
 
-// If .rosinstall exists, run 'rosws update' and return a list of names of the packages that were added.
+// If .rosinstall exists, run 'vcs import' and return a list of names of the packages that were added in both workspaces.
 async function fetchRosinstallDependencies(): Promise<string[]> {
   let colconListAfter = {stdout: '', stderr: ''};
   let packages: string[] = [];
   // Download dependencies not in apt if .rosinstall exists
   try {
+    // When generate-sources: true, the expected behavior is to include sources from both workspaces including their dependencies. 
+    // In order to make generate-sources work as expected, dependencies are fetched in both the workspaces here.
+    for (let workspace of ["robot_ws", "simulation_ws"]) {
+      if (fs.existsSync(path.join(workspace, '.rosinstall'))) {
+        await exec.exec("vcs", ["import", "--input", ".rosinstall"], {cwd: workspace});
+      }
+    }
+    // this is outside the loop as we don't want to build both the dependency packages
     if (fs.existsSync(path.join(WORKSPACE_DIRECTORY, '.rosinstall'))) {
-      await exec.exec("vcs", ["import", "--input", ".rosinstall"], getWorkingDirExecOptions());
       await exec.exec("colcon", ["list", "--names-only"], getWorkingDirExecOptions(colconListAfter));
       const packagesAfter = colconListAfter.stdout.split("\n");
       packagesAfter.forEach(packageName => {
