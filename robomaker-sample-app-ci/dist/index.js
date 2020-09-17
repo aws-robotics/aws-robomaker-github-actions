@@ -739,7 +739,7 @@ function fetchRosinstallDependencies() {
         try {
             for (let workspace of ["robot_ws", "simulation_ws"]) {
                 if (fs.existsSync(path.join(workspace, '.rosinstall'))) {
-                  await exec.exec("vcs", ["import", "--input", ".rosinstall"], {cwd: workspace});
+                  yield exec.exec("vcs", ["import", "--input", ".rosinstall"], {cwd: workspace});
                 }
             }
             if (fs.existsSync(path.join(WORKSPACE_DIRECTORY, '.rosinstall'))) {
