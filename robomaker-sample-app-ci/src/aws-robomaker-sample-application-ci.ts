@@ -150,11 +150,11 @@ async function setup_gazebo9() {
     if (ROS_DISTRO == "kinetic") {
       const gazebo9_rosdep_file = "/etc/ros/rosdep/sources.list.d/00-gazebo9.list";
       await exec.exec("sudo", ["rm", "-f", gazebo9_rosdep_file]);
-      await exec.exec("bash", ["-c", `echo "yaml https://github.com/osrf/osrf-rosdep/raw/master/gazebo9/gazebo.yaml" | sudo tee ${gazebo9_rosdep_file}`]);
-      await exec.exec("bash", ["-c", `echo "yaml https://github.com/osrf/osrf-rosdep/raw/master/gazebo9/releases/indigo.yaml indigo" | sudo tee ${gazebo9_rosdep_file}`]);
-      await exec.exec("bash", ["-c", `echo "yaml https://github.com/osrf/osrf-rosdep/raw/master/gazebo9/releases/jade.yaml jade" | sudo tee ${gazebo9_rosdep_file}`]);
-      await exec.exec("bash", ["-c", `echo "yaml https://github.com/osrf/osrf-rosdep/raw/master/gazebo9/releases/kinetic.yaml kinetic" | sudo tee ${gazebo9_rosdep_file}`]);
-      await exec.exec("bash", ["-c", `echo "yaml https://github.com/osrf/osrf-rosdep/raw/master/gazebo9/releases/lunar.yaml lunar" | sudo tee ${gazebo9_rosdep_file}`]);
+      await exec.exec("bash", ["-c", `echo "yaml https://github.com/osrf/osrf-rosdep/raw/master/gazebo9/gazebo.yaml" | sudo tee -a ${gazebo9_rosdep_file}`]);
+      await exec.exec("bash", ["-c", `echo "yaml https://github.com/osrf/osrf-rosdep/raw/master/gazebo9/releases/indigo.yaml indigo" | sudo tee -a ${gazebo9_rosdep_file}`]);
+      await exec.exec("bash", ["-c", `echo "yaml https://github.com/osrf/osrf-rosdep/raw/master/gazebo9/releases/jade.yaml jade" | sudo tee -a ${gazebo9_rosdep_file}`]);
+      await exec.exec("bash", ["-c", `echo "yaml https://github.com/osrf/osrf-rosdep/raw/master/gazebo9/releases/kinetic.yaml kinetic" | sudo tee -a ${gazebo9_rosdep_file}`]);
+      await exec.exec("bash", ["-c", `echo "yaml https://github.com/osrf/osrf-rosdep/raw/master/gazebo9/releases/lunar.yaml lunar" | sudo tee -a ${gazebo9_rosdep_file}`]);
       await exec.exec("rosdep", ["update"]);
     }
    } catch (error) {
