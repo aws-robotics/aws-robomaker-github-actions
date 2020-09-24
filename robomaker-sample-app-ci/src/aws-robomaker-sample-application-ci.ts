@@ -66,8 +66,8 @@ async function getSampleAppVersion() : Promise<string> {
          "find ../robot_ws -name package.xml -exec grep -Po '(?<=<version>)[^\\s<>]*(?=</version>)' {} +"],
       getWorkingDirExecOptions(grepAfter));
     version = grepAfter.stdout.trim();
-  } catch(err) {
-    console.error(err);
+  } catch(error) {
+    core.setFailed(error.message);
   }
   return Promise.resolve(version);
 }
@@ -93,8 +93,8 @@ async function fetchRosinstallDependencies(): Promise<string[]> {
         packages.push(packageName.trim());
       });
     }
-  } catch(err) {
-    console.error(err);
+  } catch(error) {
+    core.setFailed(error.message);
   }
   return Promise.resolve(packages);
 }
