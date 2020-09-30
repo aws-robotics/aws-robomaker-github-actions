@@ -1,4 +1,4 @@
-name: "Test aws-robomaker-github-actions"
+name: "Test aws-robomaker-github-actions-ros-2"
 
 on:
   push:
