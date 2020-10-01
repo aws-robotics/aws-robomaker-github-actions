@@ -33,7 +33,7 @@
   },
   "homepage": "https://github.com/aws-robotics/action-aws-robomaker-sample-application-ci.git#readme",
   "dependencies": {
-    "@actions/core": "^1.2.0",
+    "@actions/core": "^1.2.6",
     "@actions/exec": "^1.0.1"
   },
   "devDependencies": {
