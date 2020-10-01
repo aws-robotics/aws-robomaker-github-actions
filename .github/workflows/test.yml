@@ -59,7 +59,7 @@ jobs:
       with:
         path: action    
     - name: Setup nodeJS
-      uses: actions/setup-node@v1
+      uses: actions/setup-node@v1.4.3
       with:
         node-version: '12.x'
     - name: Install nodeJS packages
