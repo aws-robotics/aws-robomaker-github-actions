@@ -1,7 +1,14 @@
 # GitHub Action to `git secrets --scan` in your CI  🔄
 
-This simple action uses the [vanilla AWS CLI](https://docs.aws.amazon.com/cli/index.html) and [git secrets](https://github.com/awslabs/git-secrets) to scan your repository for secrets being commited to public.
+This simple action uses the [vanilla AWS CLI](https://docs.aws.amazon.com/cli/index.html) and [git secrets](https://github.com/awslabs/git-secrets) to scan your repository for secrets being commited to public. 
 
+The action checks for common AWS patterns and ensures that keys present in ~/.aws/credentials are not found in any commit. The following checks are added:
+
+* AWS Access Key IDs via (A3T[A-Z0-9]|AKIA|AGPA|AIDA|AROA|AIPA|ANPA|ANVA|ASIA)[A-Z0-9]{16}
+* AWS Secret Access Key assignments via ":" or "=" surrounded by optional quotes
+* AWS account ID assignments via ":" or "=" surrounded by optional quotes
+* Allowed patterns for example AWS keys (AKIAIOSFODNN7EXAMPLE and wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY)
+* Known credentials from ~/.aws/credentials
 
 ## Usage
 
