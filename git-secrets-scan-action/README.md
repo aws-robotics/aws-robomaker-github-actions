@@ -17,7 +17,7 @@ The action checks for common AWS patterns and ensures that keys present in ~/.aw
 Place in a `.yml` file such as this one in your `.github/workflows` folder. [Refer to the documentation on workflow YAML syntax here.](https://help.github.com/en/articles/workflow-syntax-for-github-actions)
 
 ```
-name: Sync Bucket
+name: Scan Secrets
 on: push
 
 jobs:
@@ -26,7 +26,7 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@master
+      uses: actions/checkout@v1
     - name: scan-git-secrets
       uses: aws-robotics/aws-robomaker-github-actions/git-secrets-scan-action@2.4.0
 ```
