@@ -32,12 +32,12 @@ cat secret_logs.txt | grep -q "[ERROR]";
 _secret_exists=$?
 
 # Show git secret err message helping user to rectify
-if [! -s diff.txt ]; then
+if [ ! -s diff.txt ]; then
     cat secret_logs.txt
     rm -rf secret_logs.txt
 fi
 
-if [_secret_exists == 0]; then
+if [ $_secret_exists == 0 ]; then
     # Secrets exist. Echo error and exit with code 1
     echo "Secrets exist in your commits. Please rectify and re-commit."
     exit 1
