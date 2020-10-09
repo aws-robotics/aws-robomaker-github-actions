@@ -26,17 +26,23 @@ git secrets --register-aws
 
 set +e
 
-# Scan for secrets being committed
-if git secrets --scan 2>&1 >/dev/null | grep -q "[ERROR]"; then
+# Scan entire history for secrets being committed (secrets can be committed in earlier commits which also need to be pointed out here)
+git secrets --scan-history 2> secret_logs.txt
+cat secret_logs.txt | grep -q "[ERROR]";
+_secret_exists = $?
+
+# Show git secret err message helping user to rectify
+if [! -s diff.txt ]; then
+    cat secret_logs.txt
+    rm -rf secret_logs.txt
+fi
+
+if [_secret_exists == 0]; then
     # Secrets exist. Echo error and exit with code 1
-    _secret_exists=1
     echo "Secrets exist in your commits. Please rectify and re-commit."
-    echo "::set-output name=secret_exists::$_secret_exists"
     exit 1
 else
     # Secrets don't exist. Exit with code 0
-    _secret_exists=0
     echo "No secrets exist in your commits."
-    echo "::set-output name=secret_exists::$_secret_exists"
     exit 0
 fi 
