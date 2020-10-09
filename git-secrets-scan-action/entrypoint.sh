@@ -7,7 +7,7 @@ cd ${HOME}
 git clone https://github.com/awslabs/git-secrets.git && cd git-secrets && make install 
 
 # Check if GITHUB_WORKSPACE is set
-if [[ -z "${DEPLOY_ENV}" ]]
+if [[ -z "${DEPLOY_ENV}" ]]; then
     echo "Required env variable GITHUB_WORKSPACE not set."
     exit 1
 fi
