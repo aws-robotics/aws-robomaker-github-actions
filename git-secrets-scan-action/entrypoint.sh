@@ -6,12 +6,11 @@ set -e
 cd ${HOME}
 git clone https://github.com/awslabs/git-secrets.git && cd git-secrets && make install 
 
-# Check if GITHUB_WORKSPACE is set
+# Check if GITHUB_WORKSPACE is set and points to a valid directory
 if [[ -z "${GITHUB_WORKSPACE}" || ! -d "${GITHUB_WORKSPACE}" ]]; then
     echo "Required env variable GITHUB_WORKSPACE not set or does not point to a valid directory."
     exit 1
 fi
-
 
 cd ${GITHUB_WORKSPACE}
 
