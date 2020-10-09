@@ -29,7 +29,7 @@ set +e
 # Scan entire history for secrets being committed (secrets can be committed in earlier commits which also need to be pointed out here)
 git secrets --scan-history 2> secret_logs.txt
 cat secret_logs.txt | grep -q "[ERROR]";
-_secret_exists = $?
+_secret_exists=$?
 
 # Show git secret err message helping user to rectify
 if [! -s diff.txt ]; then
