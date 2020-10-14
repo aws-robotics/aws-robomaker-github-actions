@@ -10,7 +10,7 @@ LABEL "com.github.actions.color"="blue"
 RUN apk update
 RUN apk add bash 
 RUN apk add --update alpine-sdk
-RUN apk add --update git==2.17
+RUN apk add --update git
 RUN apk add --update ncurses
 
 ADD entrypoint.sh /entrypoint.sh
