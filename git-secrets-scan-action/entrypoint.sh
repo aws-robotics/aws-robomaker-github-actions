@@ -9,8 +9,13 @@ cd ${HOME}
 git clone https://github.com/awslabs/git-secrets.git && cd git-secrets && make install 
 
 # Check if GITHUB_WORKSPACE is set and points to a valid directory
-if [[ -z "${GITHUB_WORKSPACE}" || ! -d "${REPO_PATH}" ]]; then
-    echo "Required env variable GITHUB_WORKSPACE not set or ${REPO_PATH} does not point to a valid directory."
+if [[ -z "${GITHUB_WORKSPACE}"]]; then
+    echo "Required env variable GITHUB_WORKSPACE not set."
+    exit 1
+fi
+
+if [[ ! -d "${REPO_PATH}" ]]; then
+    echo "${REPO_PATH} does not point to a valid directory."
     exit 1
 fi
 
