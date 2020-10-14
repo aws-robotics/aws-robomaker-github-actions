@@ -2,25 +2,29 @@
 
 set -e
 
-REPO_PATH=${GITHUB_WORKSPACE}/$1
-
 # Clone and install git-secrets from source
 cd ${HOME}
 git clone https://github.com/awslabs/git-secrets.git && cd git-secrets && make install 
 
-# Check if GITHUB_WORKSPACE is set and points to a valid directory
-if [[ -z "${GITHUB_WORKSPACE}"]]; then
-    echo "Required env variable GITHUB_WORKSPACE not set."
+# In actions/checkout@v1, path is the absolute path to where the repo will get checked-out.
+# In actions/checkout@v2, is a path relative to ${GITHUB_WORKSPACE} where the repo will get checked-out.
+# Hence, we check the provided path is valid as an absolute path or as an relative path.
+LOCAL_REPO_PATH=${GITHUB_WORKSPACE}/$1
+ABS_REPO_PATH=$1
+
+if [[ -d "${ABS_REPO_PATH}"]]; then
+    cd ${ABS_REPO_PATH}
+    REPO_PATH=${ABS_REPO_PATH}
+elif [[ -z "${GITHUB_WORKSPACE}" ]]; then
+    echo "Required variable GITHUB_WORKSPACE not set."
+    exit 1
+elif [[ ! -z "${GITHUB_WORKSPACE}" && -d "${LOCAL_REPO_PATH}"]]; then
+    cd ${LOCAL_REPO_PATH}
+    REPO_PATH=${LOCAL_REPO_PATH}
+else
+    echo "Neither ${ABS_REPO_PATH} nor ${LOCAL_REPO_PATH} point to a valid directory."
     exit 1
 fi
-
-if [[ ! -d "${REPO_PATH}" ]]; then
-    echo "${REPO_PATH} does not point to a valid directory."
-    exit 1
-fi
-
-cd ${REPO_PATH}
-
 # Check if repository is checked-out using actions/checkout
 if [ -z "$(ls -A .)" ]; then
     echo "${REPO_PATH} is empty. Did you checkout the repository using actions/checkout?"
