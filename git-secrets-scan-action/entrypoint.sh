@@ -23,6 +23,7 @@ fi
 # Check if repository is checked-out and repo directory is not empty
 if [[ -d "${REPO_PATH}" && ! -z "$(ls -A ${REPO_PATH})" ]]; then
     cd ${REPO_PATH}
+    ls
 else
     echo "${REPO_PATH} does not point to a valid directory or is empty. Please check the README for the usage of path input variable based on which version of actions/checkout you have used."
     exit 1
