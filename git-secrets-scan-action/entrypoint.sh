@@ -1,7 +1,8 @@
 #!/bin/sh
 
 set -e
-
+pwd
+ls
 # Clone and install git-secrets from source
 cd ${HOME}
 git clone https://github.com/awslabs/git-secrets.git && cd git-secrets && make install 
