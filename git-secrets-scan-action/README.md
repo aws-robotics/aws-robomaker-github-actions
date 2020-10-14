@@ -38,7 +38,7 @@ jobs:
 
 | Key | Value | Type | Required |
 | ------------- | ------------- | ------------- | ------------- |
-| `path` | Relative path under $GITHUB_WORKSPACE to place the repository | `string` | **No** |
+| `path` | Applicable only if you are using actions/checkout@v2. Refers to the relative path under $GITHUB_WORKSPACE where the repository is checked-out. | `string` | **No** |
 
 
 ### Environment Variables
