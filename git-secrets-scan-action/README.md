@@ -29,6 +29,9 @@ jobs:
       uses: actions/checkout@v1
     - name: scan-git-secrets
       uses: aws-robotics/aws-robomaker-github-actions/git-secrets-scan-action@2.4.0
+      with:
+        path: my-repo-path
+
 ```
 
 ### Input Variables
