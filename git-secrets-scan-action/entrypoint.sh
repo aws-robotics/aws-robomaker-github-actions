@@ -12,13 +12,13 @@ git clone https://github.com/awslabs/git-secrets.git && cd git-secrets && make i
 LOCAL_REPO_PATH=${GITHUB_WORKSPACE}/$1
 ABS_REPO_PATH=/$1
 
-if [[ -d "${ABS_REPO_PATH}"]]; then
+if [[ -d "${ABS_REPO_PATH}" ]]; then
     cd ${ABS_REPO_PATH}
     REPO_PATH=${ABS_REPO_PATH}
 elif [[ -z "${GITHUB_WORKSPACE}" ]]; then
     echo "Required variable GITHUB_WORKSPACE not set."
     exit 1
-elif [[ ! -z "${GITHUB_WORKSPACE}" && -d "${LOCAL_REPO_PATH}"]]; then
+elif [[ ! -z "${GITHUB_WORKSPACE}" && -d "${LOCAL_REPO_PATH}" ]]; then
     cd ${LOCAL_REPO_PATH}
     REPO_PATH=${LOCAL_REPO_PATH}
 else
