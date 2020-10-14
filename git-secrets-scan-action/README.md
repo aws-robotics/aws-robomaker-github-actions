@@ -31,6 +31,12 @@ jobs:
       uses: aws-robotics/aws-robomaker-github-actions/git-secrets-scan-action@2.4.0
 ```
 
+### Input Variables
+
+| Key | Value | Type | Required |
+| ------------- | ------------- | ------------- | ------------- |
+| `path` | Relative path under $GITHUB_WORKSPACE to place the repository | `string` | **No** |
+
 
 ### Environment Variables
 

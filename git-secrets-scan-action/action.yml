@@ -1,0 +1,13 @@
+name: 'Scan with git-secrets'
+description: 'Scan repository with git-secrets'
+inputs:
+  path:
+    description: 'Relative path under $GITHUB_WORKSPACE to place the repository'
+    required: true
+    default: ''
+outputs:
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.path }}
