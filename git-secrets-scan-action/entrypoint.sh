@@ -9,7 +9,7 @@ git clone https://github.com/awslabs/git-secrets.git && cd git-secrets && make i
 # In actions/checkout@v1, path is the absolute path to where the repo will get checked-out.
 # In actions/checkout@v2, is a path relative to ${GITHUB_WORKSPACE} where the repo will get checked-out.
 # Hence, we check the provided path is valid as an absolute path or as an relative path.
-LOCAL_REPO_PATH=${GITHUB_WORKSPACE}/$1
+LOCAL_REPO_PATH=${GITHUB_WORKSPACE}
 ABS_REPO_PATH=/$1
 
 if [[ -d "${ABS_REPO_PATH}" ]]; then
