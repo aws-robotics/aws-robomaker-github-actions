@@ -1,0 +1,12 @@
+name: 'Scan with git-secrets'
+description: 'Scan repository with git-secrets'
+inputs:
+  path:
+    description: 'Refers to the relative path under the current working directory or an absolute path to where the repository is checked-out'
+    required: true
+    default: '.'
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.path }}
