@@ -4,7 +4,7 @@ inputs:
   path:
     description: 'Relative path under $GITHUB_WORKSPACE to place the repository'
     required: true
-    default: ''
+    default: '.'
 runs:
   using: 'docker'
   image: 'Dockerfile'

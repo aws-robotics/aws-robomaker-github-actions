@@ -38,14 +38,4 @@ jobs:
 
 | Key | Value | Type | Required |
 | ------------- | ------------- | ------------- | ------------- |
-| `path` | Applicable only if you are using actions/checkout@v2. Refers to the relative path under $GITHUB_WORKSPACE where the repository is checked-out. | `string` | **No** |
-
-
-### Environment Variables
-
-| Key | Value | Type | Required |
-| ------------- | ------------- | ------------- | ------------- |
-| `GITHUB_WORKSPACE` | The GitHub workspace directory path. The workspace directory contains a subdirectory with a copy of your repository if your workflow uses the actions/checkout action. If you don't use the actions/checkout action, the directory will be empty. For example, /home/runner/work/my-repo-name/my-repo-name. This variable is set by GH actions. | `env` | **Yes** |
-
-
-
+| `path` | Refers to the relative path under the current working directory or an absolute path to where the repository is checked-out. If not set, repository is assumed to be checked-out under the current working directory. | `string` | **No** |

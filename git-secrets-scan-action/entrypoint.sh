@@ -2,29 +2,21 @@
 
 set -e
 
-# Clone and install git-secrets from source
+WORK_DIR=`pwd`
+
+# Clone into $HOME dir and install git-secrets from source
 cd ${HOME}
 git clone https://github.com/awslabs/git-secrets.git && cd git-secrets && make install 
 
-# Check if $GITHUB_WORKSPACE is set
-if [[ -z "${GITHUB_WORKSPACE}" ]]; then
-    echo "Required variable GITHUB_WORKSPACE not set."
-    exit 1
-fi 
+# Change directory to the default workspace directory. 
+cd ${WORK_DIR}
 
-if [ $1 ]; then
-    # actions/checkout@v2
-    REPO_PATH=${GITHUB_WORKSPACE}/$1
+# Check if repo directory exists and the repository is checked-out. If yes, change current directory to repo directory.
+# $1(path) defaults to '.' and can be a path relative to WORK_DIR or can also be an absolute path as well.
+if [[ -d "$1" && ! -z "$(ls -A $1)" ]]; then
+    cd $1
 else
-    # actions/checkout@v1
-    REPO_PATH=${GITHUB_WORKSPACE}
-fi
-
-# Check if repository is checked-out and repo directory is not empty
-if [[ -d "${REPO_PATH}" && ! -z "$(ls -A ${REPO_PATH})" ]]; then
-    cd ${REPO_PATH}
-else
-    echo "${REPO_PATH} does not point to a valid directory or is empty. Please check the README for the usage of path input variable based on which version of actions/checkout you have used."
+    echo "the provided path variable does not point to a valid directory or is empty. Does the path input variable point to the directory where your repo is checked-out?"
     exit 1
 fi
 
