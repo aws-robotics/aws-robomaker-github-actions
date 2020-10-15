@@ -10,6 +10,7 @@ git clone https://github.com/awslabs/git-secrets.git && cd git-secrets && make i
 
 # Change directory to the default workspace directory. 
 cd ${WORK_DIR}
+ls -A $1
 
 # Check if repo directory exists and the repository is checked-out. If yes, change current directory to repo directory.
 # $1(path) defaults to '.' and can be a path relative to WORK_DIR or can also be an absolute path as well.
