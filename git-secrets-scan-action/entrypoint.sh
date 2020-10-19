@@ -15,6 +15,7 @@ cd ${WORK_DIR}
 # $1(path) defaults to '.' and can be a path relative to WORK_DIR or can also be an absolute path as well.
 if [[ -d "$1" && ! -z "$(ls -A $1)" ]]; then
     cd $1
+    echo "scanning in the repo located at: ${ls}"
 else
     echo "the provided path variable does not point to a valid directory or is empty. Does the path input variable point to the directory where your repo is checked-out?"
     exit 1
