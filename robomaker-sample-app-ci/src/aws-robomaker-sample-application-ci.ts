@@ -12,7 +12,7 @@ const WORKSPACE_DIRECTORY = core.getInput('workspace-dir');
 const GENERATE_SOURCES = core.getInput('generate-sources');
 let PACKAGES = "none"
 const ROS_ENV_VARIABLES: any = {};
-let COLCON_BUNDLE_RETRIES = core.getInput('colcon-bundle-retries');
+const COLCON_BUNDLE_RETRIES = Number.parseInt(core.getInput('colcon-bundle-retries'), 10);
 const MINIMUM_BACKOFF_TIME_SECONDS = 32; // delay for the first retry in seconds
 const MAXIMUM_BACKOFF_TIME_SECONDS = 128; // maximum delay for a retry in seconds
 
