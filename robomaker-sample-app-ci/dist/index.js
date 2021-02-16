@@ -674,6 +674,9 @@ const ROS_ENV_VARIABLES = {};
 const COLCON_BUNDLE_RETRIES = Number.parseInt(core.getInput('colcon-bundle-retries'), 10);
 const MINIMUM_BACKOFF_TIME_SECONDS = 32; // delay for the first retry in seconds
 const MAXIMUM_BACKOFF_TIME_SECONDS = 128; // maximum delay for a retry in seconds
+function delay(ms: number) {
+    return new Promise( resolve => setTimeout(resolve, ms) );
+}
 function loadROSEnvVariables() {
     return __awaiter(this, void 0, void 0, function* () {
         const options = {
@@ -877,7 +880,6 @@ function bundle() {
         }
     });
 }
-
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         console.log(`ROS_DISTRO: ${ROS_DISTRO}`);
