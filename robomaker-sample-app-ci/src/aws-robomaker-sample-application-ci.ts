@@ -203,7 +203,7 @@ async function bundle() {
   // indexed from 0 because COLCON_BUNDLE_RETRIES is the number of retries AFTER the initial try
   for (let i = 0; i <= COLCON_BUNDLE_RETRIES; i++) {
     try {
-      const bundleFilename = path.basename(WORKSPACE_DIRECTORY); 
+      const bundleFilename = path.basename(WORKSPACE_DIRECTORY);
       await exec.exec("colcon", ["bundle", "--build-base", "build", "--install-base", "install", "--bundle-base", "bundle"], getWorkingDirExecOptions());
       await exec.exec("mv", ["bundle/output.tar", `../${bundleFilename}.tar`], getWorkingDirExecOptions());
       await exec.exec("rm", ["-rf", "bundle"], getWorkingDirExecOptions());  // github actions have been failing with no disk space
@@ -214,6 +214,7 @@ async function bundle() {
         core.setFailed(error.message); // set action to Failed if the colcon bundle fails even after COLCON_BUNDLE_RETRIES number of retries
         break;
       }
+      console.log(`Colcon bundle failed.. retrying in ${delay_ms} milliseconds`);
       await delay(delay_ms); // wait for next retry per the current exponential backoff delay
       delay_ms = Math.min(delay_ms * 2, MAXIMUM_BACKOFF_TIME_SECONDS); // double the delay for the next retry, truncate if required
     }
@@ -225,6 +226,7 @@ async function run() {
   console.log(`GAZEBO_VERSION: ${GAZEBO_VERSION}`);
   console.log(`WORKSPACE_DIRECTORY: ${WORKSPACE_DIRECTORY}`);
   console.log(`GENERATE_SOURCES: ${GENERATE_SOURCES}`);
+  console.log(`COLCON_BUNDLE_RETRIES: ${COLCON_BUNDLE_RETRIES}`);
   
   // check if COLCON_BUNDLE_RETRIES is valid (i.e. 0<) and not too large (i.e. <10)  
   if (COLCON_BUNDLE_RETRIES<0 || 9<COLCON_BUNDLE_RETRIES){
