@@ -674,7 +674,7 @@ const ROS_ENV_VARIABLES = {};
 const COLCON_BUNDLE_RETRIES = Number.parseInt(core.getInput('colcon-bundle-retries'), 10);
 const MINIMUM_BACKOFF_TIME_SECONDS = 32; // delay for the first retry in seconds
 const MAXIMUM_BACKOFF_TIME_SECONDS = 128; // maximum delay for a retry in seconds
-function delay(ms: number) {
+function delay(ms) {
     return new Promise( resolve => setTimeout(resolve, ms) );
 }
 function loadROSEnvVariables() {
