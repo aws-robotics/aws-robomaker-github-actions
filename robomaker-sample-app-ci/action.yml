@@ -13,6 +13,10 @@ inputs:
   generate-sources:
     description: 'Whether or not to generate sources.zip and sources.tar.gz files [true|false]'
     default: false
+  colcon-bundle-retries:
+    description: 'Number of times colcon bundle should be re-tried with exponential backoff in case of failure [0-9]'
+    default: 0
+
 outputs:
   ros-distro:
     description: 'Distribution of ROS to use [kinetic|melodic|dashing]'

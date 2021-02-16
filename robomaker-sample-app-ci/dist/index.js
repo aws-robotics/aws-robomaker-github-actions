@@ -671,6 +671,12 @@ const WORKSPACE_DIRECTORY = core.getInput('workspace-dir');
 const GENERATE_SOURCES = core.getInput('generate-sources');
 let PACKAGES = "none";
 const ROS_ENV_VARIABLES = {};
+const COLCON_BUNDLE_RETRIES = Number.parseInt(core.getInput('colcon-bundle-retries'), 10);
+const MINIMUM_BACKOFF_TIME_SECONDS = 32; // delay for the first retry in seconds
+const MAXIMUM_BACKOFF_TIME_SECONDS = 128; // maximum delay for a retry in seconds
+function delay(ms) {
+    return new Promise( resolve => setTimeout(resolve, ms) );
+}
 function loadROSEnvVariables() {
     return __awaiter(this, void 0, void 0, function* () {
         const options = {
@@ -852,14 +858,25 @@ function build() {
 }
 function bundle() {
     return __awaiter(this, void 0, void 0, function* () {
-        try {
-            const bundleFilename = path.basename(WORKSPACE_DIRECTORY);
-            yield exec.exec("colcon", ["bundle", "--build-base", "build", "--install-base", "install", "--bundle-base", "bundle"], getWorkingDirExecOptions());
-            yield exec.exec("mv", ["bundle/output.tar", `../${bundleFilename}.tar`], getWorkingDirExecOptions());
-            yield exec.exec("rm", ["-rf", "bundle"], getWorkingDirExecOptions()); // github actions have been failing with no disk space
-        }
-        catch (error) {
-            core.setFailed(error.message);
+        let delay_ms = 1000 * MINIMUM_BACKOFF_TIME_SECONDS;
+        // indexed from 0 because COLCON_BUNDLE_RETRIES is the number of retries AFTER the initial try
+        for (let i = 0; i <= COLCON_BUNDLE_RETRIES; i++) {
+            try {
+                const bundleFilename = path.basename(WORKSPACE_DIRECTORY);
+                yield exec.exec("colcon", ["bundle", "--build-base", "build", "--install-base", "install", "--bundle-base", "bundle"], getWorkingDirExecOptions());
+                yield exec.exec("mv", ["bundle/output.tar", `../${bundleFilename}.tar`], getWorkingDirExecOptions());
+                yield exec.exec("rm", ["-rf", "bundle"], getWorkingDirExecOptions());  // github actions have been failing with no disk space
+                break; // break if colcon bundle passes
+            } catch (error) {
+                yield exec.exec("rm", ["-rf", "bundle"], getWorkingDirExecOptions()); // remove erred bundle assets
+                if (i == COLCON_BUNDLE_RETRIES){
+                    core.setFailed(error.message); // set action to Failed if the colcon bundle fails even after COLCON_BUNDLE_RETRIES number of retries
+                    break;
+                }
+                console.log(`Colcon bundle failed.. retrying in ${delay_ms} milliseconds`);
+                yield delay(delay_ms); // wait for next retry per the current exponential backoff delay
+                delay_ms = Math.min(delay_ms * 2, MAXIMUM_BACKOFF_TIME_SECONDS); // double the delay for the next retry, truncate if required
+            }
         }
     });
 }
@@ -869,6 +886,11 @@ function run() {
         console.log(`GAZEBO_VERSION: ${GAZEBO_VERSION}`);
         console.log(`WORKSPACE_DIRECTORY: ${WORKSPACE_DIRECTORY}`);
         console.log(`GENERATE_SOURCES: ${GENERATE_SOURCES}`);
+        console.log(`COLCON_BUNDLE_RETRIES: ${COLCON_BUNDLE_RETRIES}`);
+        // check if COLCON_BUNDLE_RETRIES is valid (i.e. 0<) and not too large (i.e. <10)
+        if (COLCON_BUNDLE_RETRIES<0 || 9<COLCON_BUNDLE_RETRIES){
+            core.setFailed(`Invalid number of colcon bundle retries. Must be between 0-9 inclusive`);
+        }
         yield setup();
         if (ROS_DISTRO == "kinetic" && (GAZEBO_VERSION == "" || GAZEBO_VERSION == "7")) {
             GAZEBO_VERSION = "7";

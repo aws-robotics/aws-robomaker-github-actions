@@ -80,7 +80,7 @@ jobs:
     # Expectation: bundle file, build files, and dependencies all exist
     - name: Check robot_ws file existence
       id: check_robot_ws_files
-      uses: andstor/file-existence-action@87d74d4
+      uses: andstor/file-existence-action@87d74d4732ddb824259d80c8a508c0124bf1c673
       with:
         files: "./robot_ws.tar, ./robot_ws/build, ./robot_ws/install, ./robot_ws/src/deps"
         allow_failure: true
@@ -96,7 +96,7 @@ jobs:
     # Expectation: bundle file, build files, and dependencies all exist        
     - name: Check simulation_ws file existence
       id: check_simulation_ws_files
-      uses: andstor/file-existence-action@87d74d4
+      uses: andstor/file-existence-action@87d74d4732ddb824259d80c8a508c0124bf1c673
       with:
         files: "./simulation_ws.tar, ./simulation_ws/build, ./simulation_ws/install, ./simulation_ws/src/deps"
         allow_failure: true
@@ -104,7 +104,7 @@ jobs:
     # Expectation: source files exist    
     - name: Check source file existence
       id: check_source_files
-      uses: andstor/file-existence-action@87d74d4
+      uses: andstor/file-existence-action@87d74d4732ddb824259d80c8a508c0124bf1c673
       with:        
         files: "./sources.zip, ./sources.tar.gz"
     
