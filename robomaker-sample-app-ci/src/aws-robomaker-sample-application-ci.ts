@@ -209,11 +209,11 @@ async function bundle() {
       await exec.exec("rm", ["-rf", "bundle"], getWorkingDirExecOptions());  // github actions have been failing with no disk space
       break; // break if colcon bundle passes
     } catch (error) {
+      await exec.exec("rm", ["-rf", "bundle"], getWorkingDirExecOptions()); // remove erred bundle assets
       if (i == COLCON_BUNDLE_RETRIES){
         core.setFailed(error.message); // set action to Failed if the colcon bundle fails even after COLCON_BUNDLE_RETRIES number of retries
         break;
       }
-      await exec.exec("rm", ["-rf", "bundle"], getWorkingDirExecOptions()); // remove erred bundle before retrying
       await delay(delay_ms); // wait for next retry per the current exponential backoff delay
       delay_ms = Math.min(delay_ms * 2, MAXIMUM_BACKOFF_TIME_SECONDS); // double the delay for the next retry, truncate if required
     }
