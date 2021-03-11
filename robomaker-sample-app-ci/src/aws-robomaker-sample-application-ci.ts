@@ -244,6 +244,9 @@ async function run() {
   } else if (ROS_DISTRO == "dashing" && (GAZEBO_VERSION == "" || GAZEBO_VERSION == "9")) {
     GAZEBO_VERSION = "9";
     await setup_gazebo9();
+  } else if (ROS_DISTRO == "foxy" && (GAZEBO_VERSION == "" || GAZEBO_VERSION == "9")) {
+    GAZEBO_VERSION = "9";
+    await setup_gazebo9();
   } else {
     core.setFailed(`Invalid ROS and Gazebo combination`);
   }
