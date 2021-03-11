@@ -115,11 +115,11 @@ async function setup() {
       "cmake",
       "lcov",
       "libgtest-dev",
-      "python-pip",
-      "python-rosinstall",
       "python3-colcon-common-extensions",
       "python3-pip",
-      "python3-apt"
+      "python3-apt",
+      (ROS_DISTRO == "foxy") ? "python3-pip" : "python-pip",
+      (ROS_DISTRO == "foxy") ? "python3-rosinstall" : "python-rosinstall",
     ];
 
     const python3Packages = [
@@ -147,11 +147,11 @@ async function setup() {
   }
 }
 
-async function setup_gazebo9() {
+async function setup_gazebo_source() {
   try {
-    const gazebo9_apt_file = "/etc/apt/sources.list.d/gazebo-stable.list";
-    await exec.exec("sudo", ["rm", "-f", gazebo9_apt_file]);
-    await exec.exec("bash", ["-c", `echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable \`lsb_release -cs\` main" | sudo tee ${gazebo9_apt_file}`]);
+    const gazebo_apt_file = "/etc/apt/sources.list.d/gazebo-stable.list";
+    await exec.exec("sudo", ["rm", "-f", gazebo_apt_file]);
+    await exec.exec("bash", ["-c", `echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable \`lsb_release -cs\` main" | sudo tee ${gazebo_apt_file}`]);
     await exec.exec("sudo", ["apt-get", "update"]);
 
     if (ROS_DISTRO == "kinetic") {
@@ -237,13 +237,16 @@ async function run() {
   if (ROS_DISTRO == "kinetic" && (GAZEBO_VERSION == "" || GAZEBO_VERSION == "7")) {
     GAZEBO_VERSION = "7";
   } else if (ROS_DISTRO == "kinetic" && GAZEBO_VERSION == "9") {
-    await setup_gazebo9();
+    await setup_gazebo_source();
   } else if (ROS_DISTRO == "melodic" && (GAZEBO_VERSION == "" || GAZEBO_VERSION == "9")) {
     GAZEBO_VERSION = "9";
-    await setup_gazebo9();
+    await setup_gazebo_source();
   } else if (ROS_DISTRO == "dashing" && (GAZEBO_VERSION == "" || GAZEBO_VERSION == "9")) {
     GAZEBO_VERSION = "9";
-    await setup_gazebo9();
+    await setup_gazebo_source();
+  } else if (ROS_DISTRO == "foxy" && (GAZEBO_VERSION == "" || GAZEBO_VERSION == "11")) {
+    GAZEBO_VERSION = "11";
+    await setup_gazebo_source();
   } else {
     core.setFailed(`Invalid ROS and Gazebo combination`);
   }
