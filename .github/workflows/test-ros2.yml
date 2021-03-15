@@ -18,13 +18,13 @@ jobs:
     strategy:      
       matrix:
         distro: ['dashing','foxy']
-        gazebo: [9]
+        gazebo: [9,11]
         include:
         - distro: dashing
           gazebo: 9
           ubuntu_distro: bionic
         - distro: foxy
-          gazebo: 9
+          gazebo: 11
           ubuntu_distro: focal
     container: 
       image: rostooling/setup-ros-docker:ubuntu-${{ matrix.ubuntu_distro }}-ros-${{ matrix.distro }}-ros-base-latest
