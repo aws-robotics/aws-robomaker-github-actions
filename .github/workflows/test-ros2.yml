@@ -26,6 +26,12 @@ jobs:
         - distro: foxy
           gazebo: 11
           ubuntu_distro: focal
+        exclude:
+        - distro: 'dashing'
+          gazebo: 11
+        - distro: 'foxy'
+          gazebo: 9
+               
     container: 
       image: rostooling/setup-ros-docker:ubuntu-${{ matrix.ubuntu_distro }}-ros-${{ matrix.distro }}-ros-base-latest
       
