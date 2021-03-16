@@ -46,7 +46,7 @@ jobs:
         # Note: rosbuild is the user of the docker image
         # TODO(ros-tooling/setup-ros-docker#7): 
         sudo chown -R rosbuild:rosbuild "$HOME" .         
-    # Checkout SA ros1 branch into default root folder
+    # Checkout SA ros2 branch into default root folder
     - name: Checkout hello world sample app
       uses: actions/checkout@v2
       with:
