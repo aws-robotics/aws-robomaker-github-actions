@@ -6,7 +6,6 @@ import { ExecOptions } from '@actions/exec/lib/interfaces';
 const fs = require('fs');
 
 const ROS_DISTRO = core.getInput('ros-distro', {required: true});
-const UBUNTU_DISTRO = core.getInput('ubuntu_distro', {required: true})
 let GAZEBO_VERSION = core.getInput('gazebo-version');
 let SAMPLE_APP_VERSION = '';
 const WORKSPACE_DIRECTORY = core.getInput('workspace-dir');
