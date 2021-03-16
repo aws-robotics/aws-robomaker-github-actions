@@ -6,7 +6,6 @@ import { ExecOptions } from '@actions/exec/lib/interfaces';
 const fs = require('fs');
 
 const ROS_DISTRO = core.getInput('ros-distro', {required: true});
-const UBUNTU_DISTRO = core.getInput('ubuntu_distro', {required: true})
 let GAZEBO_VERSION = core.getInput('gazebo-version');
 let SAMPLE_APP_VERSION = '';
 const WORKSPACE_DIRECTORY = core.getInput('workspace-dir');
@@ -116,8 +115,8 @@ async function setup() {
       "cmake",
       "lcov",
       "libgtest-dev",
-      (UBUNTU_DISTRO == "foxy") ? "python-pip3" : "python-pip",
-      (UBUNTU_DISTRO == "foxy") ? "python-rosinstall" : "python3-rosinstall",
+      (ROS_DISTRO == "foxy") ? "python-pip3" : "python-pip",
+      (ROS_DISTRO == "foxy") ? "python-rosinstall" : "python3-rosinstall",
       "python3-colcon-common-extensions",
       "python3-pip",
       "python3-apt"
