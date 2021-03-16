@@ -115,8 +115,8 @@ async function setup() {
       "cmake",
       "lcov",
       "libgtest-dev",
-      "python-pip",
-      "python-rosinstall",
+      "python3-pip",
+      "python3-rosinstall",
       "python3-colcon-common-extensions",
       "python3-pip",
       "python3-apt"
