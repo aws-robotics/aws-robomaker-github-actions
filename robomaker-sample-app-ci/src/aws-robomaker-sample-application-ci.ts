@@ -111,7 +111,7 @@ async function setup() {
   try {
     await exec.exec("sudo", ["apt-key", "adv", "--fetch-keys", "http://packages.osrfoundation.org/gazebo.key"]);
 
-    const aptPackages = [
+    let aptPackages = [
       "zip",
       "cmake",
       "lcov",
@@ -119,9 +119,13 @@ async function setup() {
       "python3-colcon-common-extensions",
       "python3-apt",
       "python3-pip",
-      (UBUNTU_DISTRO != "focal") ? "python-pip" : "",
       (UBUNTU_DISTRO == "focal") ? "python3-rosinstall" : "python-rosinstall",
     ];
+
+    if(UBUNTU_DISTRO!="focal"){
+      //focal does not ship with python2 and does not require python-pip
+      aptPackages = aptPackages.concat(["python-pip"])
+    }
 
     const python3Packages = [
       "setuptools",
