@@ -6,6 +6,7 @@ import { ExecOptions } from '@actions/exec/lib/interfaces';
 const fs = require('fs');
 
 const ROS_DISTRO = core.getInput('ros-distro', {required: true});
+const UBUNTU_DISTRO = core.getInput('ubuntu-distro');
 let GAZEBO_VERSION = core.getInput('gazebo-version');
 let SAMPLE_APP_VERSION = '';
 const WORKSPACE_DIRECTORY = core.getInput('workspace-dir');
@@ -118,8 +119,8 @@ async function setup() {
       "python3-colcon-common-extensions",
       "python3-pip",
       "python3-apt",
-      (ROS_DISTRO == "foxy") ? "python3-pip" : "python-pip",
-      (ROS_DISTRO == "foxy") ? "python3-rosinstall" : "python-rosinstall",
+      (UBUNTU_DISTRO == "focal") ? "python3-pip" : "python-pip",
+      (UBUNTU_DISTRO == "focal") ? "python3-rosinstall" : "python-rosinstall",
     ];
 
     const python3Packages = [
