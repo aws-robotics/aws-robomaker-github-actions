@@ -6,7 +6,6 @@ import { ExecOptions } from '@actions/exec/lib/interfaces';
 const fs = require('fs');
 
 const ROS_DISTRO = core.getInput('ros-distro', {required: true});
-const UBUNTU_DISTRO = core.getInput('ubuntu-distro');
 let GAZEBO_VERSION = core.getInput('gazebo-version');
 let SAMPLE_APP_VERSION = '';
 const WORKSPACE_DIRECTORY = core.getInput('workspace-dir');
@@ -119,11 +118,13 @@ async function setup() {
       "python3-colcon-common-extensions",
       "python3-apt",
       "python3-pip",
-      (UBUNTU_DISTRO == "focal") ? "python3-rosinstall" : "python-rosinstall",
+      (ROS_DISTRO == "foxy") ? "python3-rosinstall" : "python-rosinstall",
     ];
 
-    if(UBUNTU_DISTRO!="focal"){
-      //focal does not ship with python2 and does not require python-pip
+    if(ROS_DISTRO!="foxy"){
+      //focal (foxy) does not ship with python2 and does not require python-pip
+      //using the ros_distro instead of ubuntu_distro saves users from specifying another 
+      //essentially redundant parameter.
       aptPackages = aptPackages.concat(["python-pip"])
     }
 
