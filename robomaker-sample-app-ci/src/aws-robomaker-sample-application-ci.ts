@@ -119,13 +119,9 @@ async function setup() {
       "python3-colcon-common-extensions",
       "python3-apt",
       "python3-pip",
-      (UBUNTU_DISTRO != "focal") && "python-pip",
+      (UBUNTU_DISTRO != "focal") ? "python-pip" : "",
       (UBUNTU_DISTRO == "focal") ? "python3-rosinstall" : "python-rosinstall",
     ];
-
-    if(UBUNTU_DISTRO == "focal"){
-      delete aptPackages[""]
-    }
 
     const python3Packages = [
       "setuptools",
