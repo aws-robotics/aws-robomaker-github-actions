@@ -76,7 +76,7 @@ jobs:
         ros-distro: ${{ matrix.distro }}
         gazebo-version: ${{ matrix.gazebo }}
         workspace-dir: ./robot_ws
-        generate-sources: true  
+        generate-sources: true
     # Expectation: bundle file, build files, and dependencies all exist
     - name: Check robot_ws file existence
       id: check_robot_ws_files
@@ -92,7 +92,7 @@ jobs:
         ros-distro: ${{ matrix.distro }}
         gazebo-version: ${{ matrix.gazebo }}
         workspace-dir: ./simulation_ws
-        generate-sources: false        
+        generate-sources: false
     # Expectation: bundle file, build files, and dependencies all exist        
     - name: Check simulation_ws file existence
       id: check_simulation_ws_files

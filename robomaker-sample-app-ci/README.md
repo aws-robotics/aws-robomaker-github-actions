@@ -1,7 +1,7 @@
 # AWS RoboMaker Sample Application CI Github Action
 
 This action will build and bundle your AWS RoboMaker Sample Application package.
-It must run in an environment that has all core ROS dependencies already installed for the ROS distro you are using (Kinetic, Melodic, Dashing, etc). 
+It must run in an environment that has all core ROS dependencies already installed for the ROS distro you are using (Kinetic, Melodic, Dashing, Foxy etc). 
 
 You use a [setup-ros-docker docker container], see usage section to see how to use this container. 
 
@@ -42,7 +42,7 @@ jobs:
 
 ### `ros-distro`
 
-**Required** Distribution of ROS you are using (`[kinetic|melodic|dashing]`)
+**Required** Distribution of ROS you are using (`[kinetic|melodic|dashing|foxy]`)
 
 ### `workspace-dir`
 
