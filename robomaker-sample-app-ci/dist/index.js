@@ -624,10 +624,72 @@ class ExecState extends events.EventEmitter {
 
 /***/ }),
 
+/***/ 82:
+/***/ (function(__unusedmodule, exports) {
+
+"use strict";
+
+// We use any as a valid input type
+/* eslint-disable @typescript-eslint/no-explicit-any */
+Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * Sanitizes an input into a string so it can be passed into issueCommand safely
+ * @param input input to sanitize into a string
+ */
+function toCommandValue(input) {
+    if (input === null || input === undefined) {
+        return '';
+    }
+    else if (typeof input === 'string' || input instanceof String) {
+        return input;
+    }
+    return JSON.stringify(input);
+}
+exports.toCommandValue = toCommandValue;
+//# sourceMappingURL=utils.js.map
+
+/***/ }),
+
 /***/ 87:
 /***/ (function(module) {
 
 module.exports = require("os");
+
+/***/ }),
+
+/***/ 102:
+/***/ (function(__unusedmodule, exports, __webpack_require__) {
+
+"use strict";
+
+// For internal use, subject to change.
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+// We use any as a valid input type
+/* eslint-disable @typescript-eslint/no-explicit-any */
+const fs = __importStar(__webpack_require__(747));
+const os = __importStar(__webpack_require__(87));
+const utils_1 = __webpack_require__(82);
+function issueCommand(command, message) {
+    const filePath = process.env[`GITHUB_${command}`];
+    if (!filePath) {
+        throw new Error(`Unable to find environment variable for file command ${command}`);
+    }
+    if (!fs.existsSync(filePath)) {
+        throw new Error(`Missing file at path: ${filePath}`);
+    }
+    fs.appendFileSync(filePath, `${utils_1.toCommandValue(message)}${os.EOL}`, {
+        encoding: 'utf8'
+    });
+}
+exports.issueCommand = issueCommand;
+//# sourceMappingURL=file-command.js.map
 
 /***/ }),
 
@@ -675,7 +737,7 @@ const COLCON_BUNDLE_RETRIES = Number.parseInt(core.getInput('colcon-bundle-retri
 const MINIMUM_BACKOFF_TIME_SECONDS = 32; // delay for the first retry in seconds
 const MAXIMUM_BACKOFF_TIME_SECONDS = 128; // maximum delay for a retry in seconds
 function delay(ms) {
-    return new Promise( resolve => setTimeout(resolve, ms) );
+    return new Promise(resolve => setTimeout(resolve, ms));
 }
 function loadROSEnvVariables() {
     return __awaiter(this, void 0, void 0, function* () {
@@ -769,17 +831,22 @@ function setup() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             yield exec.exec("sudo", ["apt-key", "adv", "--fetch-keys", "http://packages.osrfoundation.org/gazebo.key"]);
-            const aptPackages = [
+            let aptPackages = [
                 "zip",
                 "cmake",
                 "lcov",
                 "libgtest-dev",
-                "python-pip",
-                "python-rosinstall",
                 "python3-colcon-common-extensions",
+                "python3-apt",
                 "python3-pip",
-                "python3-apt"
+                (ROS_DISTRO == "foxy") ? "python3-rosinstall" : "python-rosinstall",
             ];
+            if (ROS_DISTRO != "foxy") {
+                //focal (foxy) does not ship with python2 and does not require python-pip
+                //using the ros_distro instead of ubuntu_distro saves users from specifying another 
+                //essentially redundant parameter.
+                aptPackages = aptPackages.concat(["python-pip"]);
+            }
             const python3Packages = [
                 "setuptools",
                 "colcon-bundle",
@@ -801,12 +868,12 @@ function setup() {
         }
     });
 }
-function setup_gazebo9() {
+function setup_gazebo_source() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const gazebo9_apt_file = "/etc/apt/sources.list.d/gazebo-stable.list";
-            yield exec.exec("sudo", ["rm", "-f", gazebo9_apt_file]);
-            yield exec.exec("bash", ["-c", `echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable \`lsb_release -cs\` main" | sudo tee ${gazebo9_apt_file}`]);
+            const gazebo_apt_file = "/etc/apt/sources.list.d/gazebo-stable.list";
+            yield exec.exec("sudo", ["rm", "-f", gazebo_apt_file]);
+            yield exec.exec("bash", ["-c", `echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable \`lsb_release -cs\` main" | sudo tee ${gazebo_apt_file}`]);
             yield exec.exec("sudo", ["apt-get", "update"]);
             if (ROS_DISTRO == "kinetic") {
                 const gazebo9_rosdep_file = "/etc/ros/rosdep/sources.list.d/00-gazebo9.list";
@@ -865,11 +932,12 @@ function bundle() {
                 const bundleFilename = path.basename(WORKSPACE_DIRECTORY);
                 yield exec.exec("colcon", ["bundle", "--build-base", "build", "--install-base", "install", "--bundle-base", "bundle"], getWorkingDirExecOptions());
                 yield exec.exec("mv", ["bundle/output.tar", `../${bundleFilename}.tar`], getWorkingDirExecOptions());
-                yield exec.exec("rm", ["-rf", "bundle"], getWorkingDirExecOptions());  // github actions have been failing with no disk space
+                yield exec.exec("rm", ["-rf", "bundle"], getWorkingDirExecOptions()); // github actions have been failing with no disk space
                 break; // break if colcon bundle passes
-            } catch (error) {
+            }
+            catch (error) {
                 yield exec.exec("rm", ["-rf", "bundle"], getWorkingDirExecOptions()); // remove erred bundle assets
-                if (i == COLCON_BUNDLE_RETRIES){
+                if (i == COLCON_BUNDLE_RETRIES) {
                     core.setFailed(error.message); // set action to Failed if the colcon bundle fails even after COLCON_BUNDLE_RETRIES number of retries
                     break;
                 }
@@ -887,8 +955,8 @@ function run() {
         console.log(`WORKSPACE_DIRECTORY: ${WORKSPACE_DIRECTORY}`);
         console.log(`GENERATE_SOURCES: ${GENERATE_SOURCES}`);
         console.log(`COLCON_BUNDLE_RETRIES: ${COLCON_BUNDLE_RETRIES}`);
-        // check if COLCON_BUNDLE_RETRIES is valid (i.e. 0<) and not too large (i.e. <10)
-        if (COLCON_BUNDLE_RETRIES<0 || 9<COLCON_BUNDLE_RETRIES){
+        // check if COLCON_BUNDLE_RETRIES is valid (i.e. 0<) and not too large (i.e. <10)  
+        if (COLCON_BUNDLE_RETRIES < 0 || 9 < COLCON_BUNDLE_RETRIES) {
             core.setFailed(`Invalid number of colcon bundle retries. Must be between 0-9 inclusive`);
         }
         yield setup();
@@ -896,15 +964,19 @@ function run() {
             GAZEBO_VERSION = "7";
         }
         else if (ROS_DISTRO == "kinetic" && GAZEBO_VERSION == "9") {
-            yield setup_gazebo9();
+            yield setup_gazebo_source();
         }
         else if (ROS_DISTRO == "melodic" && (GAZEBO_VERSION == "" || GAZEBO_VERSION == "9")) {
             GAZEBO_VERSION = "9";
-            yield setup_gazebo9();
+            yield setup_gazebo_source();
         }
         else if (ROS_DISTRO == "dashing" && (GAZEBO_VERSION == "" || GAZEBO_VERSION == "9")) {
             GAZEBO_VERSION = "9";
-            yield setup_gazebo9();
+            yield setup_gazebo_source();
+        }
+        else if (ROS_DISTRO == "foxy" && (GAZEBO_VERSION == "" || GAZEBO_VERSION == "11")) {
+            GAZEBO_VERSION = "11";
+            yield setup_gazebo_source();
         }
         else {
             core.setFailed(`Invalid ROS and Gazebo combination`);
@@ -929,17 +1001,25 @@ run();
 
 "use strict";
 
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const os = __webpack_require__(87);
+const os = __importStar(__webpack_require__(87));
+const utils_1 = __webpack_require__(82);
 /**
  * Commands
  *
  * Command Format:
- *   ##[name key=value;key=value]message
+ *   ::name key=value,key=value::message
  *
  * Examples:
- *   ##[warning]This is the user warning message
- *   ##[set-secret name=mypassword]definitelyNotAPassword!
+ *   ::warning::This is the message
+ *   ::set-env name=MY_VAR::some value
  */
 function issueCommand(command, properties, message) {
     const cmd = new Command(command, properties, message);
@@ -964,34 +1044,39 @@ class Command {
         let cmdStr = CMD_STRING + this.command;
         if (this.properties && Object.keys(this.properties).length > 0) {
             cmdStr += ' ';
+            let first = true;
             for (const key in this.properties) {
                 if (this.properties.hasOwnProperty(key)) {
                     const val = this.properties[key];
                     if (val) {
-                        // safely append the val - avoid blowing up when attempting to
-                        // call .replace() if message is not a string for some reason
-                        cmdStr += `${key}=${escape(`${val || ''}`)},`;
+                        if (first) {
+                            first = false;
+                        }
+                        else {
+                            cmdStr += ',';
+                        }
+                        cmdStr += `${key}=${escapeProperty(val)}`;
                     }
                 }
             }
         }
-        cmdStr += CMD_STRING;
-        // safely append the message - avoid blowing up when attempting to
-        // call .replace() if message is not a string for some reason
-        const message = `${this.message || ''}`;
-        cmdStr += escapeData(message);
+        cmdStr += `${CMD_STRING}${escapeData(this.message)}`;
         return cmdStr;
     }
 }
 function escapeData(s) {
-    return s.replace(/\r/g, '%0D').replace(/\n/g, '%0A');
+    return utils_1.toCommandValue(s)
+        .replace(/%/g, '%25')
+        .replace(/\r/g, '%0D')
+        .replace(/\n/g, '%0A');
 }
-function escape(s) {
-    return s
+function escapeProperty(s) {
+    return utils_1.toCommandValue(s)
+        .replace(/%/g, '%25')
         .replace(/\r/g, '%0D')
         .replace(/\n/g, '%0A')
-        .replace(/]/g, '%5D')
-        .replace(/;/g, '%3B');
+        .replace(/:/g, '%3A')
+        .replace(/,/g, '%2C');
 }
 //# sourceMappingURL=command.js.map
 
@@ -1011,10 +1096,19 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const command_1 = __webpack_require__(431);
-const os = __webpack_require__(87);
-const path = __webpack_require__(622);
+const file_command_1 = __webpack_require__(102);
+const utils_1 = __webpack_require__(82);
+const os = __importStar(__webpack_require__(87));
+const path = __importStar(__webpack_require__(622));
 /**
  * The code to exit an action
  */
@@ -1035,11 +1129,21 @@ var ExitCode;
 /**
  * Sets env variable for this action and future actions in the job
  * @param name the name of the variable to set
- * @param val the value of the variable
+ * @param val the value of the variable. Non-string values will be converted to a string via JSON.stringify
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function exportVariable(name, val) {
-    process.env[name] = val;
-    command_1.issueCommand('set-env', { name }, val);
+    const convertedVal = utils_1.toCommandValue(val);
+    process.env[name] = convertedVal;
+    const filePath = process.env['GITHUB_ENV'] || '';
+    if (filePath) {
+        const delimiter = '_GitHubActionsFileCommandDelimeter_';
+        const commandValue = `${name}<<${delimiter}${os.EOL}${convertedVal}${os.EOL}${delimiter}`;
+        file_command_1.issueCommand('ENV', commandValue);
+    }
+    else {
+        command_1.issueCommand('set-env', { name }, convertedVal);
+    }
 }
 exports.exportVariable = exportVariable;
 /**
@@ -1055,7 +1159,13 @@ exports.setSecret = setSecret;
  * @param inputPath
  */
 function addPath(inputPath) {
-    command_1.issueCommand('add-path', {}, inputPath);
+    const filePath = process.env['GITHUB_PATH'] || '';
+    if (filePath) {
+        file_command_1.issueCommand('PATH', inputPath);
+    }
+    else {
+        command_1.issueCommand('add-path', {}, inputPath);
+    }
     process.env['PATH'] = `${inputPath}${path.delimiter}${process.env['PATH']}`;
 }
 exports.addPath = addPath;
@@ -1078,12 +1188,22 @@ exports.getInput = getInput;
  * Sets the value of an output.
  *
  * @param     name     name of the output to set
- * @param     value    value to store
+ * @param     value    value to store. Non-string values will be converted to a string via JSON.stringify
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function setOutput(name, value) {
     command_1.issueCommand('set-output', { name }, value);
 }
 exports.setOutput = setOutput;
+/**
+ * Enables or disables the echoing of commands into stdout for the rest of the step.
+ * Echoing is disabled by default if ACTIONS_STEP_DEBUG is not set.
+ *
+ */
+function setCommandEcho(enabled) {
+    command_1.issue('echo', enabled ? 'on' : 'off');
+}
+exports.setCommandEcho = setCommandEcho;
 //-----------------------------------------------------------------------
 // Results
 //-----------------------------------------------------------------------
@@ -1101,6 +1221,13 @@ exports.setFailed = setFailed;
 // Logging Commands
 //-----------------------------------------------------------------------
 /**
+ * Gets whether Actions Step Debug is on or not
+ */
+function isDebug() {
+    return process.env['RUNNER_DEBUG'] === '1';
+}
+exports.isDebug = isDebug;
+/**
  * Writes debug message to user log
  * @param message debug message
  */
@@ -1110,18 +1237,18 @@ function debug(message) {
 exports.debug = debug;
 /**
  * Adds an error issue
- * @param message error issue message
+ * @param message error issue message. Errors will be converted to string via toString()
  */
 function error(message) {
-    command_1.issue('error', message);
+    command_1.issue('error', message instanceof Error ? message.toString() : message);
 }
 exports.error = error;
 /**
  * Adds an warning issue
- * @param message warning issue message
+ * @param message warning issue message. Errors will be converted to string via toString()
  */
 function warning(message) {
-    command_1.issue('warning', message);
+    command_1.issue('warning', message instanceof Error ? message.toString() : message);
 }
 exports.warning = warning;
 /**
@@ -1179,8 +1306,9 @@ exports.group = group;
  * Saves state for current action, the state can only be retrieved by this action's post job execution.
  *
  * @param     name     name of the state to store
- * @param     value    value to store
+ * @param     value    value to store. Non-string values will be converted to a string via JSON.stringify
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function saveState(name, value) {
     command_1.issueCommand('save-state', { name }, value);
 }
