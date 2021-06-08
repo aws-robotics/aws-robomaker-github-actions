@@ -17,15 +17,15 @@ jobs:
     
     strategy:      
       matrix:
-        distro: ['dashing']
-        gazebo: [9]
+        distro: ['foxy']
+        gazebo: [11]
         include:
-        - distro: dashing
-          gazebo: 9
-          ubuntu_distro: bionic
+        - distro: foxy
+          gazebo: 11
+          ubuntu_distro: focal
                
     container: 
-      image: rostooling/setup-ros-docker:ubuntu-${{ matrix.ubuntu_distro }}-ros-${{ matrix.distro }}-ros-base-latest
+      image: ubuntu:${{ matrix.ubuntu_distro }}
       
     # NOTES: We run 2 tests for robot_ws and simulation_ws
     # The test steps are duplicated because github workflow does not support reusable step (with parameter yet)
@@ -43,7 +43,7 @@ jobs:
       uses: actions/checkout@v2
       with:
         repository: aws-robotics/aws-robomaker-sample-application-helloworld
-        ref: ros2
+        ref: ros2_foxy
     # Checkout action code into action folder
     - name: Checkout action code
       uses: actions/checkout@v2
@@ -83,7 +83,7 @@ jobs:
         ros-distro: ${{ matrix.distro }}
         gazebo-version: ${{ matrix.gazebo }}
         workspace-dir: ./simulation_ws
-        generate-sources: false        
+        generate-sources: false      
     # Expectation: bundle file, build files, and dependencies all exist        
     - name: Check simulation_ws file existence
       id: check_simulation_ws_files
