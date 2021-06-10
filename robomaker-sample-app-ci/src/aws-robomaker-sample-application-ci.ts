@@ -114,7 +114,7 @@ async function fetchRosinstallDependencies(): Promise<string[]> {
       await exec.exec("bash", ["-c", `ln -snf /usr/share/zoneinfo/${timezone} /etc/localtime`]);
       await exec.exec("bash" , ["-c", `echo ${timezone} > /etc/timezone`]);
     }
-    await exec.exec("bash", ["-c", "scripts/setup.sh"]);
+    await exec.exec("bash", ["-c", `scripts/setup.sh --install-ros ${ROS_DISTRO}`]);
     loadROSEnvVariables();
     await exec.exec("apt-get", ["update"]);
     //zip required for prepare_sources step.
