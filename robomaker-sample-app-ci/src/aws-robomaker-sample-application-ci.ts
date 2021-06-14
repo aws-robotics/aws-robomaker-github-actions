@@ -6,7 +6,6 @@ import { ExecOptions } from '@actions/exec/lib/interfaces';
 const fs = require('fs');
 
 const ROS_DISTRO = core.getInput('ros-distro', {required: true});
-let GAZEBO_VERSION = core.getInput('gazebo-version');
 let SAMPLE_APP_VERSION = '';
 const WORKSPACE_DIRECTORY = core.getInput('workspace-dir');
 const GENERATE_SOURCES = core.getInput('generate-sources');
@@ -181,7 +180,6 @@ async function bundle() {
 
 async function run() {
   console.log(`ROS_DISTRO: ${ROS_DISTRO}`);
-  console.log(`GAZEBO_VERSION: ${GAZEBO_VERSION}`);
   console.log(`WORKSPACE_DIRECTORY: ${WORKSPACE_DIRECTORY}`);
   console.log(`GENERATE_SOURCES: ${GENERATE_SOURCES}`);
   console.log(`COLCON_BUNDLE_RETRIES: ${COLCON_BUNDLE_RETRIES}`);
@@ -199,7 +197,6 @@ async function run() {
   await bundle();
 
   core.setOutput('ros-distro', ROS_DISTRO)
-  core.setOutput('gazebo-version', "gazebo"+GAZEBO_VERSION)
   core.setOutput('sample-app-version', SAMPLE_APP_VERSION);
 }
 
