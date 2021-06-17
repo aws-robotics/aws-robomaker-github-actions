@@ -107,6 +107,10 @@ async function fetchRosinstallDependencies(): Promise<string[]> {
  async function setup() {
    try{
 
+    //this function relies on the fact that there is only 1 package.xml in ./robot_ws
+    SAMPLE_APP_VERSION = await getSampleAppVersion();
+    console.log(`Sample App version found to be: ${SAMPLE_APP_VERSION}`);
+
     if (!fs.existsSync("/etc/timezone")) {
       //default to US Pacific if timezone is not set.
       const timezone = "US/Pacific";
@@ -118,9 +122,7 @@ async function fetchRosinstallDependencies(): Promise<string[]> {
     await exec.exec("apt-get", ["update"]);
     //zip required for prepare_sources step.
     await exec.exec("apt-get", ["install", "-y", "zip"]);
-    SAMPLE_APP_VERSION = await getSampleAppVersion();
-    console.log(`Sample App version found to be: ${SAMPLE_APP_VERSION}`);
-
+    
     let packages = await fetchRosinstallDependencies();
     PACKAGES = packages.join(" ");
    } catch (error) {
