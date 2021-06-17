@@ -57,7 +57,6 @@ jobs:
       uses: ./action/robomaker-sample-app-ci
       with:
         ros-distro: ${{ matrix.distro }}
-        gazebo-version: ${{ matrix.gazebo }}
         workspace-dir: ./robot_ws
         generate-sources: true
     # Expectation: bundle file, build files, and dependencies all exist
@@ -73,7 +72,6 @@ jobs:
       uses: ./action/robomaker-sample-app-ci
       with:
         ros-distro: ${{ matrix.distro }}
-        gazebo-version: ${{ matrix.gazebo }}
         workspace-dir: ./simulation_ws
         generate-sources: false
     # Expectation: bundle file, build files, and dependencies all exist        
