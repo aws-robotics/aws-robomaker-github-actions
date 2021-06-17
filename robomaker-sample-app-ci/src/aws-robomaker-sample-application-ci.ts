@@ -6,7 +6,6 @@ import { ExecOptions } from '@actions/exec/lib/interfaces';
 const fs = require('fs');
 
 const ROS_DISTRO = core.getInput('ros-distro', {required: true});
-let GAZEBO_VERSION = core.getInput('gazebo-version');
 let SAMPLE_APP_VERSION = '';
 const WORKSPACE_DIRECTORY = core.getInput('workspace-dir');
 const GENERATE_SOURCES = core.getInput('generate-sources');
@@ -105,75 +104,29 @@ async function fetchRosinstallDependencies(): Promise<string[]> {
   }
   return Promise.resolve(packages);
 }
+ async function setup() {
+   try{
 
-async function setup() {
-  try {
-    await exec.exec("sudo", ["apt-key", "adv", "--fetch-keys", "http://packages.osrfoundation.org/gazebo.key"]);
-
-    let aptPackages = [
-      "zip",
-      "cmake",
-      "lcov",
-      "libgtest-dev",
-      "python3-colcon-common-extensions",
-      "python3-apt",
-      "python3-pip",
-      (ROS_DISTRO == "foxy") ? "python3-rosinstall" : "python-rosinstall",
-    ];
-
-    if(ROS_DISTRO!="foxy"){
-      //focal (foxy) does not ship with python2 and does not require python-pip
-      //using the ros_distro instead of ubuntu_distro saves users from specifying another 
-      //essentially redundant parameter.
-      aptPackages = aptPackages.concat(["python-pip"])
+    if (!fs.existsSync("/etc/timezone")) {
+      //default to US Pacific if timezone is not set.
+      const timezone = "US/Pacific";
+      await exec.exec("bash", ["-c", `ln -snf /usr/share/zoneinfo/${timezone} /etc/localtime`]);
+      await exec.exec("bash" , ["-c", `echo ${timezone} > /etc/timezone`]);
     }
-
-    const python3Packages = [
-      "setuptools",
-      "colcon-bundle",
-      "colcon-ros-bundle"
-    ];
-
-    await exec.exec("sudo", ["apt-get", "update"]);
-    await exec.exec("sudo", ["apt-get", "install", "-y"].concat(aptPackages));
-    await exec.exec("sudo", ["pip3", "install", "-U"].concat(python3Packages));
-
-    await exec.exec("rosdep", ["update"]);
-
-    await loadROSEnvVariables();
-
+    await exec.exec("bash", ["-c", `scripts/setup.sh --install-ros ${ROS_DISTRO}`]);
+    loadROSEnvVariables();
+    await exec.exec("apt-get", ["update"]);
+    //zip required for prepare_sources step.
+    await exec.exec("apt-get", ["install", "-y", "zip"]);
     SAMPLE_APP_VERSION = await getSampleAppVersion();
     console.log(`Sample App version found to be: ${SAMPLE_APP_VERSION}`);
 
-    // Update PACKAGES_TO_SKIP_TESTS with the new packages added by 'rosws update'.
     let packages = await fetchRosinstallDependencies();
     PACKAGES = packages.join(" ");
-  } catch (error) {
-    core.setFailed(error.message);
-  }
-}
-
-async function setup_gazebo_source() {
-  try {
-    const gazebo_apt_file = "/etc/apt/sources.list.d/gazebo-stable.list";
-    await exec.exec("sudo", ["rm", "-f", gazebo_apt_file]);
-    await exec.exec("bash", ["-c", `echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable \`lsb_release -cs\` main" | sudo tee ${gazebo_apt_file}`]);
-    await exec.exec("sudo", ["apt-get", "update"]);
-
-    if (ROS_DISTRO == "kinetic") {
-      const gazebo9_rosdep_file = "/etc/ros/rosdep/sources.list.d/00-gazebo9.list";
-      await exec.exec("sudo", ["rm", "-f", gazebo9_rosdep_file]);
-      await exec.exec("bash", ["-c", `echo "yaml https://github.com/osrf/osrf-rosdep/raw/master/gazebo9/gazebo.yaml" | sudo tee -a ${gazebo9_rosdep_file}`]);
-      await exec.exec("bash", ["-c", `echo "yaml https://github.com/osrf/osrf-rosdep/raw/master/gazebo9/releases/indigo.yaml indigo" | sudo tee -a ${gazebo9_rosdep_file}`]);
-      await exec.exec("bash", ["-c", `echo "yaml https://github.com/osrf/osrf-rosdep/raw/master/gazebo9/releases/jade.yaml jade" | sudo tee -a ${gazebo9_rosdep_file}`]);
-      await exec.exec("bash", ["-c", `echo "yaml https://github.com/osrf/osrf-rosdep/raw/master/gazebo9/releases/kinetic.yaml kinetic" | sudo tee -a ${gazebo9_rosdep_file}`]);
-      await exec.exec("bash", ["-c", `echo "yaml https://github.com/osrf/osrf-rosdep/raw/master/gazebo9/releases/lunar.yaml lunar" | sudo tee -a ${gazebo9_rosdep_file}`]);
-      await exec.exec("rosdep", ["update"]);
-    }
    } catch (error) {
     core.setFailed(error.message);
-  }
-}
+   }
+ }
 
 async function prepare_sources() {
   try {
@@ -196,8 +149,6 @@ async function prepare_sources() {
 
 async function build() {
   try {
-    await exec.exec("rosdep", ["install", "--from-paths", ".", "--ignore-src", "-r", "-y", "--rosdistro", ROS_DISTRO], getWorkingDirExecOptions());
-    console.log(`Building the following packages: ${PACKAGES}`);
     await exec.exec("colcon", ["build", "--build-base", "build", "--install-base", "install"], getWorkingDirExecOptions());
   } catch (error) {
     core.setFailed(error.message);
@@ -229,7 +180,6 @@ async function bundle() {
 
 async function run() {
   console.log(`ROS_DISTRO: ${ROS_DISTRO}`);
-  console.log(`GAZEBO_VERSION: ${GAZEBO_VERSION}`);
   console.log(`WORKSPACE_DIRECTORY: ${WORKSPACE_DIRECTORY}`);
   console.log(`GENERATE_SOURCES: ${GENERATE_SOURCES}`);
   console.log(`COLCON_BUNDLE_RETRIES: ${COLCON_BUNDLE_RETRIES}`);
@@ -240,22 +190,6 @@ async function run() {
   }
 
   await setup();
-  if (ROS_DISTRO == "kinetic" && (GAZEBO_VERSION == "" || GAZEBO_VERSION == "7")) {
-    GAZEBO_VERSION = "7";
-  } else if (ROS_DISTRO == "kinetic" && GAZEBO_VERSION == "9") {
-    await setup_gazebo_source();
-  } else if (ROS_DISTRO == "melodic" && (GAZEBO_VERSION == "" || GAZEBO_VERSION == "9")) {
-    GAZEBO_VERSION = "9";
-    await setup_gazebo_source();
-  } else if (ROS_DISTRO == "dashing" && (GAZEBO_VERSION == "" || GAZEBO_VERSION == "9")) {
-    GAZEBO_VERSION = "9";
-    await setup_gazebo_source();
-  } else if (ROS_DISTRO == "foxy" && (GAZEBO_VERSION == "" || GAZEBO_VERSION == "11")) {
-    GAZEBO_VERSION = "11";
-    await setup_gazebo_source();
-  } else {
-    core.setFailed(`Invalid ROS and Gazebo combination`);
-  }
   if (GENERATE_SOURCES == 'true') {
     await prepare_sources();
   }
@@ -263,7 +197,6 @@ async function run() {
   await bundle();
 
   core.setOutput('ros-distro', ROS_DISTRO)
-  core.setOutput('gazebo-version', "gazebo"+GAZEBO_VERSION)
   core.setOutput('sample-app-version', SAMPLE_APP_VERSION);
 }
 
