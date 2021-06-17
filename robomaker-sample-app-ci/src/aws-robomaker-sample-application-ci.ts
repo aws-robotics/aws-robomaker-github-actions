@@ -69,7 +69,7 @@ async function getSampleAppVersion() : Promise<string> {
   try {
     await exec.exec("bash", [
         "-c",
-         "find ../robot_ws -name package.xml -exec grep -Po '(?<=<version>)[^\\s<>]*(?=</version>)' {} +"],
+         "find ../robot_ws -name package.xml -not -path ../robot_ws/src/deps/* -exec grep -Po '(?<=<version>)[^\\s<>]*(?=</version>)' {} +"],
       getWorkingDirExecOptions(grepAfter));
     version = grepAfter.stdout.trim();
   } catch(error) {
