@@ -9,7 +9,6 @@ const ROS_DISTRO = core.getInput('ros-distro', {required: true});
 let SAMPLE_APP_VERSION = '';
 const WORKSPACE_DIRECTORY = core.getInput('workspace-dir');
 const GENERATE_SOURCES = core.getInput('generate-sources');
-let PACKAGES = "none"
 const ROS_ENV_VARIABLES: any = {};
 const COLCON_BUNDLE_RETRIES = Number.parseInt(core.getInput('colcon-bundle-retries'), 10);
 const MINIMUM_BACKOFF_TIME_SECONDS = 32; // delay for the first retry in seconds
@@ -78,10 +77,8 @@ async function getSampleAppVersion() : Promise<string> {
   return Promise.resolve(version);
 }
 
-// If .rosinstall exists, run 'vcs import' and return a list of names of the packages that were added in both workspaces.
-async function fetchRosinstallDependencies(): Promise<string[]> {
-  let colconListAfter = {stdout: '', stderr: ''};
-  let packages: string[] = [];
+// If .rosinstall exists, run 'vcs import'
+async function fetchRosinstallDependencies() {
   // Download dependencies not in apt if .rosinstall exists
   try {
     // When generate-sources: true, the expected behavior is to include sources from both workspaces including their dependencies. 
@@ -91,26 +88,13 @@ async function fetchRosinstallDependencies(): Promise<string[]> {
         await exec.exec("vcs", ["import", "--input", ".rosinstall"], {cwd: workspace});
       }
     }
-    // this is outside the loop as we don't want to build both the dependency packages
-    if (fs.existsSync(path.join(WORKSPACE_DIRECTORY, '.rosinstall'))) {
-      await exec.exec("colcon", ["list", "--names-only"], getWorkingDirExecOptions(colconListAfter));
-      const packagesAfter = colconListAfter.stdout.split("\n");
-      packagesAfter.forEach(packageName => {
-        packages.push(packageName.trim());
-      });
-    }
+
   } catch(error) {
     core.setFailed(error.message);
-  }
-  return Promise.resolve(packages);
+  } 
 }
  async function setup() {
    try{
-
-    //this function relies on the fact that there is only 1 package.xml in ./robot_ws
-    SAMPLE_APP_VERSION = await getSampleAppVersion();
-    console.log(`Sample App version found to be: ${SAMPLE_APP_VERSION}`);
-
     if (!fs.existsSync("/etc/timezone")) {
       //default to US Pacific if timezone is not set.
       const timezone = "US/Pacific";
@@ -118,13 +102,14 @@ async function fetchRosinstallDependencies(): Promise<string[]> {
       await exec.exec("bash" , ["-c", `echo ${timezone} > /etc/timezone`]);
     }
     await exec.exec("bash", ["-c", `scripts/setup.sh --install-ros ${ROS_DISTRO}`]);
-    loadROSEnvVariables();
+    await loadROSEnvVariables();
     await exec.exec("apt-get", ["update"]);
     //zip required for prepare_sources step.
     await exec.exec("apt-get", ["install", "-y", "zip"]);
-    
-    let packages = await fetchRosinstallDependencies();
-    PACKAGES = packages.join(" ");
+
+    SAMPLE_APP_VERSION = await getSampleAppVersion();
+    console.log(`Sample App version found to be: ${SAMPLE_APP_VERSION}`);
+    await fetchRosinstallDependencies();
    } catch (error) {
     core.setFailed(error.message);
    }
