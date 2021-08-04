@@ -120,6 +120,7 @@ async function prepare_sources() {
     const sourceIncludes = [
       "robot_ws",
       "simulation_ws",
+      "scripts",
       "LICENSE*",
       "NOTICE*",
       "README*",
