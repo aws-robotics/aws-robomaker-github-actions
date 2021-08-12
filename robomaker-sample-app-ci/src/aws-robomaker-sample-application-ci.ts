@@ -161,7 +161,7 @@ async function bundle() {
       }
       console.log(`Colcon bundle failed.. retrying in ${delay_ms} milliseconds`);
       await delay(delay_ms); // wait for next retry per the current exponential backoff delay
-      delay_ms = Math.min(delay_ms * 2, MAXIMUM_BACKOFF_TIME_SECONDS); // double the delay for the next retry, truncate if required
+      delay_ms = Math.min(delay_ms * 2,  1000 * MAXIMUM_BACKOFF_TIME_SECONDS); // double the delay for the next retry, truncate if required
     }
   }
 }
