@@ -158,10 +158,10 @@ async function run() {
     } catch (error) {
       await exec.exec("rm", ["-rf", "bundle"], getWorkingDirExecOptions()); // remove erred bundle assets
       if (i == RETRIES){
-        core.setFailed(error.message); // set action to Failed if the colcon bundle fails even after RETRIES number of retries
+        core.setFailed(error.message); // set action to Failed after RETRIES number of retries
         break;
       }
-      console.log(`Colcon bundle failed.. retrying in ${delay_ms} milliseconds`);
+      console.log(`Action failed.. retrying in ${delay_ms} milliseconds`);
       await delay(delay_ms); // wait for next retry per the current exponential backoff delay
       delay_ms = Math.min(delay_ms * 2,  1000 * MAXIMUM_BACKOFF_TIME_SECONDS); // double the delay for the next retry, truncate if required
       core.setFailed(error.message);
