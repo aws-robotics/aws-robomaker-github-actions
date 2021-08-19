@@ -141,7 +141,7 @@ async function run() {
   
   // check if RETRIES is valid (i.e. 0<) and not too large (i.e. <10)  
   if (RETRIES<0 || 9<RETRIES){
-    core.setFailed(`Invalid number of colcon bundle retries. Must be between 0-9 inclusive`);
+    core.setFailed(`Invalid number of retries. Must be between 0-9 inclusive`);
   }
 
   for (let i = 0; i <= RETRIES; i++) {
