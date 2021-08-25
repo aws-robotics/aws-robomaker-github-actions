@@ -862,6 +862,7 @@ function run() {
         // check if RETRIES is valid (i.e. 0<) and not too large (i.e. <10)  
         if (RETRIES < 0 || 9 < RETRIES) {
             core.setFailed(`Invalid number of retries. Must be between 0-9 inclusive`);
+            return;
         }
         for (let i = 0; i <= RETRIES; i++) {
             try {
@@ -884,7 +885,6 @@ function run() {
                 console.log(`Action failed.. retrying in ${delay_ms} milliseconds`);
                 yield delay(delay_ms); // wait for next retry per the current exponential backoff delay
                 delay_ms = Math.min(delay_ms * 2, 1000 * MAXIMUM_BACKOFF_TIME_SECONDS); // double the delay for the next retry, truncate if required
-                core.setFailed(error.message);
             }
         }
     });
