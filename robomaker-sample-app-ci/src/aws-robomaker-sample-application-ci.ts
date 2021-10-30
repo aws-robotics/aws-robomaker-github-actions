@@ -45,9 +45,11 @@ function getWorkingDirParentExecOptions(listenerBuffers?): ExecOptions {
 
 function getExecOptions(workingDir, extraPath, listenerBuffers?): ExecOptions {
   var listenerBuffers = listenerBuffers || {};
+  var envVariables = Object.assign({}, process.env, ROS_ENV_VARIABLES);
+  envVariables['PYTHONPATH'] = '/home/pypackages/lib/python3.6/site-packages/';
   const execOptions: ExecOptions = {
     cwd: path.join(workingDir, extraPath),
-    env: Object.assign({}, process.env, ROS_ENV_VARIABLES)
+    env: envVariables
   };
   if (listenerBuffers) {
     execOptions.listeners = {
