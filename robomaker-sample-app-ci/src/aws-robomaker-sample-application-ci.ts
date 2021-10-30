@@ -132,6 +132,10 @@ async function bundle() {
   await exec.exec("rm", ["-rf", "bundle"], getWorkingDirExecOptions());  // github actions have been failing with no disk space
 }
 
+async function installPyparsing() {
+  await exec.exec("bash", ["-c", `pip3 install --install-option="--prefix=/home/pypackages" pyparsing==2.0.2`, getWorkingDirExecOptions()]);
+}
+
 async function run() {
   let delay_ms = 1000 * MINIMUM_BACKOFF_TIME_SECONDS;
   console.log(`ROS_DISTRO: ${ROS_DISTRO}`);
@@ -151,6 +155,8 @@ async function run() {
       if (GENERATE_SOURCES == 'true') {
         await prepare_sources();
       }
+      # workaroung to get sample app build working
+      await installPyparsing()
       await build();
       await bundle();
       core.setOutput('ros-distro', ROS_DISTRO)
