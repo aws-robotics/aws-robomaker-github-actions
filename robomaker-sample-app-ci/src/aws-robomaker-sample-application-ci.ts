@@ -133,7 +133,7 @@ async function bundle() {
 }
 
 async function installPyparsing() {
-  # install pyparsing-2.0.2 to a local directory so that it can be added to PYTHONPATH env variable
+  //install pyparsing-2.0.2 to a local directory so that it can be added to PYTHONPATH env variable
   await exec.exec("bash", ["-c", `pip3 install --install-option="--prefix=/home/pypackages" pyparsing==2.0.2`, getWorkingDirExecOptions()]);
 }
 
