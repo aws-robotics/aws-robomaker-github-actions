@@ -132,8 +132,9 @@ async function bundle() {
   await exec.exec("rm", ["-rf", "bundle"], getWorkingDirExecOptions());  // github actions have been failing with no disk space
 }
 
-async function build() {
-  await exec.exec("colcon", ["build", "--build-base", "build", "--install-base", "install"], getWorkingDirExecOptions());
+async function installPyparsing() {
+  # install pyparsing-2.0.2 to a local directory so that it can be added to PYTHONPATH env variable
+  await exec.exec("bash", ["-c", `pip3 install --install-option="--prefix=/home/pypackages" pyparsing==2.0.2`, getWorkingDirExecOptions()]);
 }
 
 async function run() {
