@@ -132,6 +132,10 @@ async function bundle() {
   await exec.exec("rm", ["-rf", "bundle"], getWorkingDirExecOptions());  // github actions have been failing with no disk space
 }
 
+async function build() {
+  await exec.exec("colcon", ["build", "--build-base", "build", "--install-base", "install"], getWorkingDirExecOptions());
+}
+
 async function run() {
   let delay_ms = 1000 * MINIMUM_BACKOFF_TIME_SECONDS;
   console.log(`ROS_DISTRO: ${ROS_DISTRO}`);
@@ -151,6 +155,7 @@ async function run() {
       if (GENERATE_SOURCES == 'true') {
         await prepare_sources();
       }
+      await installPyparsing();
       await build();
       await bundle();
       core.setOutput('ros-distro', ROS_DISTRO)
