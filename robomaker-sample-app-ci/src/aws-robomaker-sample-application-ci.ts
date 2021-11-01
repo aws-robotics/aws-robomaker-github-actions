@@ -45,11 +45,9 @@ function getWorkingDirParentExecOptions(listenerBuffers?): ExecOptions {
 
 function getExecOptions(workingDir, extraPath, listenerBuffers?): ExecOptions {
   var listenerBuffers = listenerBuffers || {};
-  var envVariables = Object.assign({}, process.env, ROS_ENV_VARIABLES);
-  envVariables['PYTHONPATH'] = '/home/pypackages/lib/python3.6/site-packages/:$PYTHONPATH';
   const execOptions: ExecOptions = {
     cwd: path.join(workingDir, extraPath),
-    env: envVariables
+    env: Object.assign({}, process.env, ROS_ENV_VARIABLES)
   };
   if (listenerBuffers) {
     execOptions.listeners = {
@@ -135,8 +133,9 @@ async function bundle() {
 }
 
 async function installPyparsing() {
-  //install pyparsing-2.0.2 to a local directory so that it can be added to PYTHONPATH env variable
-  await exec.exec("bash", ["-c", `pip3 install --install-option="--prefix=/home/pypackages" pyparsing==2.0.2`], getWorkingDirExecOptions());
+  // install pyparsing-2.0.2 since pyparsing-3.0 is no supported by python pyconfig
+  // https://github.com/pypa/packaging/commit/20cd09e00917adbc4afeaa753be831a6bc2740f7
+  await exec.exec("bash", ["-c", `pip3 install pyparsing==2.0.2`], getWorkingDirExecOptions());
 }
 
 async function run() {
