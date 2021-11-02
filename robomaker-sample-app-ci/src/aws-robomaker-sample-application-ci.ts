@@ -93,7 +93,7 @@ async function fetchRosinstallDependencies() {
     await exec.exec("bash", ["-c", `ln -snf /usr/share/zoneinfo/${timezone} /etc/localtime`]);
     await exec.exec("bash" , ["-c", `echo ${timezone} > /etc/timezone`]);
   }
-  await exec.exec("bash", ["-c", `scripts/setup.sh --install-ros ${ROS_DISTRO}`]);
+  await exec.exec("bash", ["-c", `scripts/setup.sh --install-ros ${ROS_DISTRO}`], getWorkingDirParentExecOptions());
   await loadROSEnvVariables();
   await exec.exec("apt-get", ["update"]);
   //zip required for prepare_sources step.
@@ -133,8 +133,9 @@ async function bundle() {
 }
 
 async function installPyparsing() {
-  //install pyparsing-2.0.2 to a local directory so that it can be added to PYTHONPATH env variable
-  await exec.exec("bash", ["-c", `pip3 install --install-option="--prefix=/home/pypackages" pyparsing==2.0.2`], getWorkingDirExecOptions());
+  // install pyparsing-2.0.2 since pyparsing-3.0 is no supported by python pyconfig
+  // https://github.com/pypa/packaging/commit/20cd09e00917adbc4afeaa753be831a6bc2740f7
+  await exec.exec("bash", ["-c", `pip3 install pyparsing==2.0.2`], getWorkingDirExecOptions());
 }
 
 async function run() {
